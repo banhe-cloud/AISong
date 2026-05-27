@@ -1,10 +1,8 @@
-# compiled output
-/dist
-/server/node_modules
-/web/node_modules
-/web/.next
-scripts
-
+/*
+!/.gitignore
+!/web/
+!/server/
+.web/package-lock.json
 # Environment variables
 .env
 .env.local
