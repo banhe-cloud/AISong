@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI Session Report</title>
+<style>
+:root{--bg:#0f1117;--surface:#1a1d27;--border:#2a2d3a;--text:#e4e4e7;--dim:#8b8d97;--accent:#6366f1;--green:#22c55e;--red:#ef4444;--blue:#3b82f6;--orange:#f59e0b;--purple:#a855f7}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,monospace;background:var(--bg);color:var(--text);line-height:1.6;padding:24px;max-width:1200px;margin:0 auto}
+h1{font-size:1.5rem;margin-bottom:4px}
+.meta{color:var(--dim);font-size:.8rem;margin-bottom:24px}
+.tabs{display:flex;gap:2px;margin-bottom:20px;border-bottom:1px solid var(--border)}
+.tab{padding:8px 16px;cursor:pointer;border-radius:6px 6px 0 0;color:var(--dim);font-size:.85rem;transition:all .15s}
+.tab:hover{color:var(--text);background:var(--surface)}
+.tab.active{color:var(--accent);background:var(--surface);border-bottom:2px solid var(--accent)}
+.panel{display:none}
+.panel.active{display:block}
+.hero{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:24px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px}
+.card .val{font-size:1.8rem;font-weight:700;color:var(--accent)}
+.card .label{font-size:.75rem;color:var(--dim);text-transform:uppercase;letter-spacing:.5px}
+.card.green .val{color:var(--green)}
+.card.orange .val{color:var(--orange)}
+.card.purple .val{color:var(--purple)}
+.section{margin-bottom:28px}
+.section h2{font-size:1rem;margin-bottom:12px;color:var(--dim);text-transform:uppercase;letter-spacing:1px;font-weight:500}
+table{width:100%;border-collapse:collapse;font-size:.82rem}
+th{text-align:left;padding:8px 12px;border-bottom:1px solid var(--border);color:var(--dim);font-weight:500;cursor:pointer;user-select:none}
+th:hover{color:var(--text)}
+td{padding:6px 12px;border-bottom:1px solid var(--border)}
+tr:hover td{background:rgba(99,102,241,.05)}
+.bar-cell{position:relative}
+.bar{position:absolute;left:0;top:2px;bottom:2px;background:rgba(99,102,241,.15);border-radius:3px;transition:width .3s}
+.bar-text{position:relative;z-index:1}
+.take{display:flex;gap:12px;align-items:center;padding:10px 14px;border-radius:6px;margin-bottom:8px;font-size:.85rem}
+.take.bad{background:rgba(239,68,68,.08);border-left:3px solid var(--red)}
+.take.good{background:rgba(34,197,94,.08);border-left:3px solid var(--green)}
+.take.info{background:rgba(59,130,246,.08);border-left:3px solid var(--blue)}
+.take .fig{font-size:1.3rem;font-weight:700;min-width:60px;text-align:center}
+.take.bad .fig{color:var(--red)}
+.take.good .fig{color:var(--green)}
+.take.info .fig{color:var(--blue)}
+.take .txt{flex:1}
+.callout{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:12px 16px;margin-bottom:8px;font-size:.82rem}
+.comparison-bar{display:flex;height:28px;border-radius:6px;overflow:hidden;margin:8px 0}
+.comparison-bar .claude-seg{background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:600;color:#fff;min-width:30px}
+.comparison-bar .cursor-seg{background:var(--orange);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:600;color:#fff;min-width:30px}
+.timeline{display:flex;flex-direction:column;gap:3px}
+.day-row{display:flex;align-items:center;gap:8px;font-size:.75rem}
+.day-row .date{min-width:80px;color:var(--dim)}
+.day-row .bars{flex:1;display:flex;height:18px;border-radius:3px;overflow:hidden}
+.day-row .bars .c-bar{background:var(--accent);transition:width .3s}
+.day-row .bars .k-bar{background:var(--orange);transition:width .3s}
+.day-row .count{min-width:60px;text-align:right;color:var(--dim)}
+.empty-state{text-align:center;padding:40px;color:var(--dim);font-style:italic}
+@media(max-width:600px){.hero{grid-template-columns:1fr 1fr}.tabs{overflow-x:auto}}
+</style>
+</head>
+<body>
+<h1>AI Coding Session Report</h1>
+<p class="meta">Generated: <span id="gen-time"></span> | Period: <span id="period"></span></p>
+
+<div class="tabs">
+  <div class="tab active" data-tab="overview">Overview</div>
+  <div class="tab" data-tab="claude">Claude Code</div>
+  <div class="tab" data-tab="cursor">Cursor</div>
+  <div class="tab" data-tab="daily">Daily Timeline</div>
+</div>
+
+<!-- Overview Panel -->
+<div class="panel active" id="panel-overview">
+  <div class="section">
+    <div class="take info"><div class="fig">15</div><div class="txt"><b>Cursor</b> 占 83% session（15/18），为主要 AI 编码工具</div></div>
+    <div class="take info"><div class="fig">3</div><div class="txt"><b>Claude Code</b> 3 个 session，集中在 train-trn-bff 与 ai-session-report</div></div>
+    <div class="take good"><div class="fig">4k</div><div class="txt">Composer 采纳约 <b>4005</b> 行，本周代码产出主力</div></div>
+    <div class="take bad"><div class="fig">0</div><div class="txt">Token 统计均为 0，本地 telemetry 可能未记录</div></div>
+    <div class="take info"><div class="fig">9.6%</div><div class="txt">Tab 补全采纳率偏低（30/311 行），可多用 Agent 批量改动</div></div>
+  </div>
+  <div class="hero" id="hero-overview"></div>
+  <div class="section">
+    <h2>Token Distribution</h2>
+    <div id="comparison-bar-container"></div>
+  </div>
+  <div class="section">
+    <h2>Insights & Optimizations</h2>
+    <div class="callout">高峰日在 <b>5/19、5/21</b>（各 6–7 个 Cursor session），可对照当天 commit 复盘产出。</div>
+    <div class="callout">Claude 仅 2 个项目有记录；若跨机使用，确认 <code>~/.claude/projects</code> 路径完整。</div>
+    <div class="callout">Tab 采纳率低时，优先用 Composer/Agent 做整块生成，减少逐行 Tab 接受。</div>
+  </div>
+</div>
+
+<!-- Claude Panel -->
+<div class="panel" id="panel-claude">
+  <div class="hero" id="hero-claude"></div>
+  <div class="section">
+    <h2>By Project</h2>
+    <table id="table-claude-projects"><thead><tr><th>Project</th><th>Sessions</th><th>Input Tokens</th><th>Output Tokens</th><th>Cache %</th><th>API Calls</th></tr></thead><tbody></tbody></table>
+  </div>
+  <div class="section">
+    <h2>By Subagent Type</h2>
+    <table id="table-claude-agents"><thead><tr><th>Type</th><th>Calls</th><th>Tokens</th><th>Avg/Call</th></tr></thead><tbody></tbody></table>
+  </div>
+  <div class="section">
+    <h2>Skills / Commands</h2>
+    <table id="table-claude-skills"><thead><tr><th>Skill</th><th>Invocations</th></tr></thead><tbody></tbody></table>
+  </div>
+</div>
+
+<!-- Cursor Panel -->
+<div class="panel" id="panel-cursor">
+  <div class="hero" id="hero-cursor"></div>
+  <div class="section">
+    <h2>Code Completion</h2>
+    <div id="completion-stats"></div>
+  </div>
+  <div class="section">
+    <h2>By Mode</h2>
+    <table id="table-cursor-modes"><thead><tr><th>Mode</th><th>Sessions</th><th>Tokens</th><th>Cost</th><th>Requests</th></tr></thead><tbody></tbody></table>
+  </div>
+  <div class="section">
+    <h2>Top Sessions</h2>
+    <table id="table-cursor-sessions"><thead><tr><th>Name</th><th>Mode</th><th>Tokens</th><th>Turns</th><th>Cost</th><th>Created</th></tr></thead><tbody></tbody></table>
+  </div>
+  <div class="section">
+    <h2>By Workspace</h2>
+    <table id="table-cursor-workspaces"><thead><tr><th>Workspace</th><th>Sessions</th><th>Tokens</th></tr></thead><tbody></tbody></table>
+  </div>
+</div>
+
+<!-- Daily Timeline Panel -->
+<div class="panel" id="panel-daily">
+  <div class="section">
+    <h2>Daily Token Usage (Claude vs Cursor)</h2>
+    <div class="timeline" id="daily-timeline"></div>
+  </div>
+</div>
+
+<script id="report-data" type="application/json">{
+  "generated_at": "2026-05-25T12:53:56.189Z",
+  "period": {
+    "since": "7d"
+  },
+  "claude": {
+    "root": "/Users/hban/.claude/projects",
+    "overall": {
+      "sessions": 3,
+      "api_calls": 3,
+      "human_messages": 3,
+      "input_tokens": {
+        "uncached": 0,
+        "cache_create": 0,
+        "cache_read": 0,
+        "total": 0,
+        "pct_cached": 0
+      },
+      "output_tokens": 0,
+      "hours": {
+        "wall_clock": 0,
+        "active": 0
+      },
+      "cache_breaks": 0,
+      "subagent": {
+        "calls": 0,
+        "total_tokens": 0,
+        "avg_per_call": 0
+      },
+      "skill_invocations": {
+        "ai-session-report": 1
+      },
+      "span": {
+        "from": "2026-05-19T11:10:16.894Z",
+        "to": "2026-05-25T12:52:54.996Z"
+      }
+    },
+    "cache_breaks": [],
+    "by_project": {
+      "-Users-hban": {
+        "sessions": 1,
+        "api_calls": 1,
+        "human_messages": 1,
+        "input_tokens": {
+          "uncached": 0,
+          "cache_create": 0,
+          "cache_read": 0,
+          "total": 0,
+          "pct_cached": 0
+        },
+        "output_tokens": 0,
+        "hours": {
+          "wall_clock": 0,
+          "active": 0
+        },
+        "cache_breaks": 0,
+        "subagent": {
+          "calls": 0,
+          "total_tokens": 0,
+          "avg_per_call": 0
+        },
+        "skill_invocations": {
+          "ai-session-report": 1
+        },
+        "span": {
+          "from": "2026-05-25T12:52:54.903Z",
+          "to": "2026-05-25T12:52:54.996Z"
+        }
+      },
+      "-Users-hban-Desktop-train-trn-bff-ai-agent-application": {
+        "sessions": 2,
+        "api_calls": 2,
+        "human_messages": 2,
+        "input_tokens": {
+          "uncached": 0,
+          "cache_create": 0,
+          "cache_read": 0,
+          "total": 0,
+          "pct_cached": 0
+        },
+        "output_tokens": 0,
+        "hours": {
+          "wall_clock": 0,
+          "active": 0
+        },
+        "cache_breaks": 0,
+        "subagent": {
+          "calls": 0,
+          "total_tokens": 0,
+          "avg_per_call": 0
+        },
+        "skill_invocations": {},
+        "span": {
+          "from": "2026-05-19T11:10:16.894Z",
+          "to": "2026-05-19T11:10:32.109Z"
+        }
+      }
+    },
+    "by_subagent_type": {},
+    "by_day": []
+  },
+  "claude_error": null,
+  "cursor": {
+    "db_path": "/Users/hban/Library/Application Support/Cursor/User/globalStorage/state.vscdb",
+    "overall": {
+      "sessions": 15,
+      "total_input_tokens": 0,
+      "total_output_tokens": 0,
+      "total_tokens": 0,
+      "total_cost_cents": 0,
+      "total_requests": 0,
+      "avg_tokens_per_session": 0
+    },
+    "by_mode": {
+      "agent": {
+        "sessions": 13,
+        "tokens": 0,
+        "cost_cents": 0,
+        "requests": 0
+      },
+      "chat": {
+        "sessions": 2,
+        "tokens": 0,
+        "cost_cents": 0,
+        "requests": 0
+      }
+    },
+    "by_workspace": {},
+    "by_day": [
+      {
+        "date": "2026-05-19",
+        "dow": "Tue",
+        "sessions": 6,
+        "tokens": 0,
+        "cost_cents": 0
+      },
+      {
+        "date": "2026-05-21",
+        "dow": "Thu",
+        "sessions": 7,
+        "tokens": 0,
+        "cost_cents": 0
+      },
+      {
+        "date": "2026-05-22",
+        "dow": "Fri",
+        "sessions": 1,
+        "tokens": 0,
+        "cost_cents": 0
+      },
+      {
+        "date": "2026-05-25",
+        "dow": "Mon",
+        "sessions": 1,
+        "tokens": 0,
+        "cost_cents": 0
+      }
+    ],
+    "top_sessions": [],
+    "code_completion": {
+      "total_tab_suggested_lines": 311,
+      "total_tab_accepted_lines": 30,
+      "tab_acceptance_rate": 9.6,
+      "total_composer_suggested_lines": 2999,
+      "total_composer_accepted_lines": 4005,
+      "composer_acceptance_rate": 133.5,
+      "by_day": [
+        {
+          "date": "2026-05-19",
+          "tab_suggested": 177,
+          "tab_accepted": 20,
+          "composer_suggested": 888,
+          "composer_accepted": 357
+        },
+        {
+          "date": "2026-05-20",
+          "tab_suggested": 51,
+          "tab_accepted": 1,
+          "composer_suggested": 713,
+          "composer_accepted": 977
+        },
+        {
+          "date": "2026-05-21",
+          "tab_suggested": 2,
+          "tab_accepted": 0,
+          "composer_suggested": 230,
+          "composer_accepted": 398
+        },
+        {
+          "date": "2026-05-22",
+          "tab_suggested": 10,
+          "tab_accepted": 0,
+          "composer_suggested": 55,
+          "composer_accepted": 901
+        },
+        {
+          "date": "2026-05-23",
+          "tab_suggested": 0,
+          "tab_accepted": 0,
+          "composer_suggested": 205,
+          "composer_accepted": 1066
+        },
+        {
+          "date": "2026-05-24",
+          "tab_suggested": 10,
+          "tab_accepted": 2,
+          "composer_suggested": 658,
+          "composer_accepted": 1
+        },
+        {
+          "date": "2026-05-25",
+          "tab_suggested": 61,
+          "tab_accepted": 7,
+          "composer_suggested": 250,
+          "composer_accepted": 305
+        }
+      ]
+    }
+  },
+  "cursor_error": null,
+  "comparison": {
+    "total_tokens": {
+      "claude": 0,
+      "cursor": 0,
+      "total": 0
+    },
+    "pct": {
+      "claude": 0,
+      "cursor": 0
+    },
+    "total_sessions": {
+      "claude": 3,
+      "cursor": 15
+    },
+    "by_day": [
+      {
+        "date": "2026-05-19",
+        "dow": "Tue",
+        "claude_tokens": 0,
+        "claude_sessions": 0,
+        "cursor_tokens": 0,
+        "cursor_sessions": 6
+      },
+      {
+        "date": "2026-05-21",
+        "dow": "Thu",
+        "claude_tokens": 0,
+        "claude_sessions": 0,
+        "cursor_tokens": 0,
+        "cursor_sessions": 7
+      },
+      {
+        "date": "2026-05-22",
+        "dow": "Fri",
+        "claude_tokens": 0,
+        "claude_sessions": 0,
+        "cursor_tokens": 0,
+        "cursor_sessions": 1
+      },
+      {
+        "date": "2026-05-25",
+        "dow": "Mon",
+        "claude_tokens": 0,
+        "claude_sessions": 0,
+        "cursor_tokens": 0,
+        "cursor_sessions": 1
+      }
+    ]
+  }
+}</script>
+<script>
+(function(){
+const data = JSON.parse(document.getElementById('report-data').textContent);
+const claude = data.claude;
+const cursor = data.cursor;
+const comp = data.comparison;
+
+document.getElementById('gen-time').textContent = data.generated_at ? new Date(data.generated_at).toLocaleString() : 'N/A';
+document.getElementById('period').textContent = data.period?.since || '7d';
+
+// Tabs
+document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => {
+  document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(x => x.classList.remove('active'));
+  t.classList.add('active');
+  document.getElementById('panel-' + t.dataset.tab).classList.add('active');
+}));
+
+function fmt(n) { if(n>=1e9)return(n/1e9).toFixed(1)+'B';if(n>=1e6)return(n/1e6).toFixed(1)+'M';if(n>=1e3)return(n/1e3).toFixed(1)+'k';return String(n||0) }
+function money(cents) { return cents >= 100 ? '$'+(cents/100).toFixed(2) : cents+'¢' }
+
+// Overview heroes
+if(comp){
+  const h = document.getElementById('hero-overview');
+  h.innerHTML = `
+    <div class="card"><div class="val">${fmt(comp.total_tokens?.total||0)}</div><div class="label">Total Tokens</div></div>
+    <div class="card green"><div class="val">${fmt(comp.total_tokens?.claude||0)}</div><div class="label">Claude Code</div></div>
+    <div class="card orange"><div class="val">${fmt(comp.total_tokens?.cursor||0)}</div><div class="label">Cursor</div></div>
+    <div class="card"><div class="val">${(comp.total_sessions?.claude||0)+(comp.total_sessions?.cursor||0)}</div><div class="label">Total Sessions</div></div>
+  `;
+  const bar = document.getElementById('comparison-bar-container');
+  const cp = comp.pct?.claude||0, kp = comp.pct?.cursor||0;
+  bar.innerHTML = `<div class="comparison-bar"><div class="claude-seg" style="width:${cp}%">Claude ${cp}%</div><div class="cursor-seg" style="width:${kp}%">Cursor ${kp}%</div></div>`;
+}
+
+// Claude panel
+if(claude){
+  const o = claude.overall;
+  const h = document.getElementById('hero-claude');
+  h.innerHTML = `
+    <div class="card"><div class="val">${o.sessions}</div><div class="label">Sessions</div></div>
+    <div class="card"><div class="val">${fmt(o.input_tokens?.total||0)}</div><div class="label">Input Tokens</div></div>
+    <div class="card"><div class="val">${fmt(o.output_tokens||0)}</div><div class="label">Output Tokens</div></div>
+    <div class="card green"><div class="val">${o.input_tokens?.pct_cached||0}%</div><div class="label">Cache Hit</div></div>
+    <div class="card"><div class="val">${o.api_calls}</div><div class="label">API Calls</div></div>
+    <div class="card"><div class="val">${o.hours?.active||0}h</div><div class="label">Active Time</div></div>
+  `;
+  // Projects table
+  const tb = document.querySelector('#table-claude-projects tbody');
+  const projects = Object.entries(claude.by_project||{}).sort((a,b)=>(b[1].input_tokens?.total||0)-(a[1].input_tokens?.total||0));
+  const maxProjTokens = projects[0]?.[1]?.input_tokens?.total||1;
+  for(const [name,s] of projects){
+    const it = s.input_tokens||{};
+    tb.innerHTML += `<tr><td>${name}</td><td>${s.sessions}</td><td class="bar-cell"><div class="bar" style="width:${(it.total/maxProjTokens*100).toFixed(0)}%"></div><span class="bar-text">${fmt(it.total)}</span></td><td>${fmt(s.output_tokens)}</td><td>${it.pct_cached||0}%</td><td>${s.api_calls}</td></tr>`;
+  }
+  // Agents table
+  const atb = document.querySelector('#table-claude-agents tbody');
+  const agents = Object.entries(claude.by_subagent_type||{}).sort((a,b)=>(b[1].input_tokens?.total||0)-(a[1].input_tokens?.total||0));
+  for(const [name,s] of agents){
+    const tot = (s.input_tokens?.total||0)+(s.output_tokens||0);
+    atb.innerHTML += `<tr><td>${name}</td><td>${s.sessions}</td><td>${fmt(tot)}</td><td>${fmt(s.subagent?.avg_per_call||0)}</td></tr>`;
+  }
+  // Skills table
+  const stb = document.querySelector('#table-claude-skills tbody');
+  const skills = Object.entries(o.skill_invocations||{}).sort((a,b)=>b[1]-a[1]);
+  for(const [name,count] of skills.slice(0,20)){
+    stb.innerHTML += `<tr><td>${name}</td><td>${count}</td></tr>`;
+  }
+} else {
+  document.getElementById('panel-claude').innerHTML = '<div class="empty-state">Claude Code data not available</div>';
+}
+
+// Cursor panel
+if(cursor){
+  const o = cursor.overall;
+  const cc = cursor.code_completion||{};
+  const h = document.getElementById('hero-cursor');
+  h.innerHTML = `
+    <div class="card"><div class="val">${o.sessions}</div><div class="label">Sessions</div></div>
+    <div class="card"><div class="val">${fmt(o.total_input_tokens||0)}</div><div class="label">Input Tokens</div></div>
+    <div class="card"><div class="val">${fmt(o.total_output_tokens||0)}</div><div class="label">Output Tokens</div></div>
+    <div class="card orange"><div class="val">${money(o.total_cost_cents||0)}</div><div class="label">Cost</div></div>
+    <div class="card"><div class="val">${o.total_requests||0}</div><div class="label">Requests</div></div>
+    <div class="card purple"><div class="val">${cc.tab_acceptance_rate||0}%</div><div class="label">Tab Accept Rate</div></div>
+  `;
+  // Completion stats
+  const cs = document.getElementById('completion-stats');
+  cs.innerHTML = `<div class="hero">
+    <div class="card"><div class="val">${fmt(cc.total_tab_suggested_lines||0)}</div><div class="label">Tab Suggested Lines</div></div>
+    <div class="card green"><div class="val">${fmt(cc.total_tab_accepted_lines||0)}</div><div class="label">Tab Accepted Lines</div></div>
+    <div class="card"><div class="val">${fmt(cc.total_composer_suggested_lines||0)}</div><div class="label">Composer Suggested</div></div>
+    <div class="card green"><div class="val">${fmt(cc.total_composer_accepted_lines||0)}</div><div class="label">Composer Accepted</div></div>
+  </div>`;
+  // Modes table
+  const mtb = document.querySelector('#table-cursor-modes tbody');
+  for(const [mode,s] of Object.entries(cursor.by_mode||{}).sort((a,b)=>b[1].tokens-a[1].tokens)){
+    mtb.innerHTML += `<tr><td>${mode}</td><td>${s.sessions}</td><td>${fmt(s.tokens)}</td><td>${money(s.cost_cents)}</td><td>${s.requests}</td></tr>`;
+  }
+  // Top sessions table
+  const tsb = document.querySelector('#table-cursor-sessions tbody');
+  for(const s of (cursor.top_sessions||[]).slice(0,20)){
+    tsb.innerHTML += `<tr><td>${s.name}</td><td>${s.mode}</td><td>${fmt(s.total_tokens)}</td><td>${s.turns}</td><td>${money(s.cost_cents)}</td><td>${s.created_at?s.created_at.slice(0,10):''}</td></tr>`;
+  }
+  // Workspaces table
+  const wsb = document.querySelector('#table-cursor-workspaces tbody');
+  for(const [name,s] of Object.entries(cursor.by_workspace||{}).slice(0,15)){
+    wsb.innerHTML += `<tr><td>${name}</td><td>${s.sessions}</td><td>${fmt(s.tokens)}</td></tr>`;
+  }
+} else {
+  document.getElementById('panel-cursor').innerHTML = '<div class="empty-state">Cursor data not available</div>';
+}
+
+// Daily timeline
+if(comp?.by_day?.length){
+  const tl = document.getElementById('daily-timeline');
+  const maxDay = Math.max(...comp.by_day.map(d=>(d.claude_tokens||0)+(d.cursor_tokens||0)), 1);
+  for(const d of comp.by_day){
+    const ct = d.claude_tokens||0, kt = d.cursor_tokens||0, tot = ct+kt;
+    const cw = tot>0?(ct/maxDay*100).toFixed(1):0;
+    const kw = tot>0?(kt/maxDay*100).toFixed(1):0;
+    tl.innerHTML += `<div class="day-row"><span class="date">${d.date} ${d.dow}</span><div class="bars"><div class="c-bar" style="width:${cw}%"></div><div class="k-bar" style="width:${kw}%"></div></div><span class="count">${fmt(tot)}</span></div>`;
+  }
+} else {
+  document.getElementById('daily-timeline').innerHTML = '<div class="empty-state">No daily data available</div>';
+}
+
+// Table sorting
+document.querySelectorAll('table').forEach(table => {
+  table.querySelectorAll('th').forEach((th, colIdx) => {
+    th.addEventListener('click', () => {
+      const tbody = table.querySelector('tbody');
+      const rows = [...tbody.querySelectorAll('tr')];
+      const dir = th.dataset.dir === 'asc' ? 'desc' : 'asc';
+      th.dataset.dir = dir;
+      rows.sort((a, b) => {
+        const av = a.children[colIdx]?.textContent || '';
+        const bv = b.children[colIdx]?.textContent || '';
+        const an = parseFloat(av.replace(/[^0-9.-]/g, ''));
+        const bn = parseFloat(bv.replace(/[^0-9.-]/g, ''));
+        if (!isNaN(an) && !isNaN(bn)) return dir === 'asc' ? an - bn : bn - an;
+        return dir === 'asc' ? av.localeCompare(bv) : bv.localeCompare(av);
+      });
+      rows.forEach(r => tbody.appendChild(r));
+    });
+  });
+});
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,255 @@
+# Generate Audio
+
+## OpenAPI Specification
+
+```yaml
+openapi: 3.0.1
+info:
+  title: ''
+  description: ''
+  version: 1.0.0
+paths:
+  /api/v1/task:
+    post:
+      summary: Generate Audio
+      deprecated: false
+      description: >-
+        ## Overview
+
+        This endpoint from PiAPI's DiffRhythm API can generate audio based on
+        prompt or reference audio with lyrics. 
+
+        The lyric placement is highly flexible—PiAPI users can customize lyric
+        integration using structured input formats. They can also choose
+        different task-type depending on the target duration of the music they
+        want.
+
+
+        ## Information&Pricing
+
+        | Model | Task Type | Generate Audio Duration | Price (USD) | 
+
+        |-------------------|------------|---|------------|
+
+        | Qubico/diffrhythm | txt2audio-base | 1.35 min |$0.02/generation | 
+
+        | Qubico/diffrhythm |txt2audio-full | 4.45 min | $0.02/generation | 
+
+
+        ## Example
+
+        To generate reasonable audio, Users could choose audio style(e.g., pop)
+        based on text or upload Base64 or url of reference audio. 
+
+        Here is an example that users could follow when they need to generate a
+        song with lyrics: 
+
+        >[00:10.00] Drifting through the Milky Way’s glow, stars hum low and
+        bright
+
+        >[00:17.00] Every shadow hides a cosmos, burning without light
+
+        >[00:24.00] You said you loved black holes’ silence, where time turns to
+        dust
+
+        >[00:31.00] I clung to supernova whispers, aching with their trust
+
+        >[00:38.00] Orion’s belt held promises we strung like comet trails
+
+        >[00:45.00] Now Saturn’s rings just echo how our gravity fails
+
+        >[00:52.00] Your voice became a distant pulse, a quasars’ fading song
+
+        >[00:59.00] I chart the void where constellations swore we’d belong
+
+        >[01:06.00] Nebulas bleed hues we named—our scarlet, our chrome
+
+        >[01:13.00] But cold dark matter cradles what the stars left alone…
+
+        >[01:20.00] (Instrumental fade: synth waves & celestial chimes)
+
+
+        Users can control the musical style/tone through prompts when adding
+        lyrics to precise time positions.
+      tags:
+        - Endpoints/DiffRhythm
+      parameters:
+        - name: x-api-key
+          in: header
+          description: your api key
+          required: false
+          example: ''
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                model:
+                  type: string
+                  description: Model name, currently select Qubico/diffrhythm.
+                  enum:
+                    - Qubico/diffrhythm
+                  x-apidog-enum:
+                    - value: Qubico/diffrhythm
+                      name: ''
+                      description: ''
+                task_type:
+                  type: string
+                  description: >-
+                    Currently could select txt2audio-base or txt2audio-full
+                    based on the length of audio that you want to generate.
+                  enum:
+                    - txt2audio-base
+                    - txt2audio-full
+                  x-apidog-enum:
+                    - value: txt2audio-base
+                      name: ''
+                      description: ''
+                    - value: txt2audio-full
+                      name: ''
+                      description: ''
+                input:
+                  type: object
+                  properties:
+                    lyrics:
+                      type: string
+                      description: >-
+                        The lyrics of the audio following a specific structure
+                        (eg. [00:10.00] Drifting through the Milky Way’s glow,
+                        stars hum low and bright [00:17.00] Every shadow hides a
+                        cosmos, burning without light).
+                    style_prompt:
+                      type: string
+                      description: Describe the style of audio that you want to generate.
+                    style_audio:
+                      type: string
+                      description: Base64 or URL of the reference audio style.
+                  x-apidog-orders:
+                    - lyrics
+                    - style_prompt
+                    - style_audio
+                  title: ''
+                config:
+                  type: object
+                  properties:
+                    webhook_config:
+                      type: object
+                      properties:
+                        endpoint:
+                          type: string
+                          description: Webhook receiving address(optional).
+                        secret:
+                          type: string
+                          description: Webhook receiving key(optional).
+                      x-apidog-orders:
+                        - endpoint
+                        - secret
+                      title: ''
+                  x-apidog-orders:
+                    - webhook_config
+                  title: ''
+              x-apidog-orders:
+                - model
+                - task_type
+                - input
+                - config
+              title: ''
+              required:
+                - model
+                - task_type
+                - input
+                - config
+            example:
+              model: Qubico/diffrhythm
+              task_type: txt2audio-base
+              input:
+                lyrics: ''
+                style_prompt: pop
+                style_audio: ''
+              config:
+                webhook_config:
+                  endpoint: ''
+                  secret: ''
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  model:
+                    type: string
+                  task_type:
+                    type: string
+                  input:
+                    type: object
+                    properties:
+                      prompt:
+                        type: string
+                      negative_prompt:
+                        type: string
+                      video:
+                        type: string
+                      steps:
+                        type: integer
+                      seed:
+                        type: integer
+                    required:
+                      - prompt
+                      - video
+                    x-apidog-orders:
+                      - prompt
+                      - negative_prompt
+                      - video
+                      - steps
+                      - seed
+                  config:
+                    type: object
+                    properties:
+                      webhook_config:
+                        type: object
+                        properties:
+                          endpoint:
+                            type: string
+                          secret:
+                            type: string
+                        x-apidog-orders:
+                          - endpoint
+                          - secret
+                    x-apidog-orders:
+                      - webhook_config
+                x-apidog-orders:
+                  - model
+                  - task_type
+                  - input
+                  - config
+              example:
+                model: Qubico/diffrhythm
+                task_type: txt2audio-base
+                input:
+                  lyrics: ''
+                  style_prompt: pop
+                  style_audio: ''
+                config:
+                  webhook_config:
+                    endpoint: ''
+                    secret: ''
+          headers: {}
+          x-apidog-name: Success
+      security: []
+      x-apidog-folder: Endpoints/DiffRhythm
+      x-apidog-status: released
+      x-run-in-apidog: https://app.apidog.com/web/project/675356/apis/api-15107449-run
+components:
+  schemas: {}
+  securitySchemes: {}
+servers:
+  - url: https://api.piapi.ai
+    description: Develop Env
+security: []
+
+```
