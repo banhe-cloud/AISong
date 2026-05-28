@@ -1,0 +1,14 @@
+{
+  "name": "aisong",
+  "private": true,
+  "workspaces": [
+    "server",
+    "web"
+  ],
+  "scripts": {
+    "build": "npm run build --workspace=web"
+  },
+  "engines": {
+    "node": "20.x"
+  }
+}
