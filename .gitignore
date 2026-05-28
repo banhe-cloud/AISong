@@ -1,7 +1,6 @@
 /*
 !/.gitignore
 !/vercel.json
-!/api/
 !/web/
 !/server/
 .web/package-lock.json

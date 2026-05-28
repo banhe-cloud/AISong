@@ -12,6 +12,7 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(
     AppModule,
     new ExpressAdapter(expressApp),
+    { logger: ['error'] },
   );
   app.setGlobalPrefix('api');
   app.set('trust proxy', true);
@@ -21,6 +22,11 @@ async function bootstrap() {
 }
 
 export default async function handler(req: express.Request, res: express.Response) {
-  if (!server) server = await bootstrap();
-  return server(req, res);
+  try {
+    if (!server) server = await bootstrap();
+    server(req, res);
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ message: e instanceof Error ? e.message : 'Server error' });
+  }
 }
