@@ -1,9 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
-import { join } from 'path';
+import { getDataDir, getDataFile } from '../data-path';
 
 export const DAILY_LIMIT = 5;
-const QUOTA_FILE = join(process.cwd(), 'data', 'ip-quota.json');
 
 @Injectable()
 export class QuotaService {
@@ -30,13 +29,14 @@ export class QuotaService {
   }
 
   private load(): Record<string, Record<string, number>> {
-    const dir = join(process.cwd(), 'data');
+    const dir = getDataDir();
+    const file = getDataFile('ip-quota.json');
     if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
-    if (!existsSync(QUOTA_FILE)) return {};
-    return JSON.parse(readFileSync(QUOTA_FILE, 'utf-8'));
+    if (!existsSync(file)) return {};
+    return JSON.parse(readFileSync(file, 'utf-8'));
   }
 
   private save(data: Record<string, Record<string, number>>) {
-    writeFileSync(QUOTA_FILE, JSON.stringify(data, null, 2));
+    writeFileSync(getDataFile('ip-quota.json'), JSON.stringify(data, null, 2));
   }
 }

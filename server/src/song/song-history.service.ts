@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
-import { join } from 'path';
+import { getDataDir, getDataFile } from '../data-path';
 
 export interface StoredSong {
   id: number;
@@ -12,8 +12,6 @@ export interface StoredSong {
   taskType?: string;
   createdAt: string;
 }
-
-const SONGS_FILE = join(process.cwd(), 'data', 'songs.json');
 
 @Injectable()
 export class SongHistoryService {
@@ -34,14 +32,15 @@ export class SongHistoryService {
   }
 
   private load(): StoredSong[] {
-    const dir = join(process.cwd(), 'data');
+    const dir = getDataDir();
+    const file = getDataFile('songs.json');
     if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
-    if (!existsSync(SONGS_FILE)) return [];
-    const data = JSON.parse(readFileSync(SONGS_FILE, 'utf-8'));
+    if (!existsSync(file)) return [];
+    const data = JSON.parse(readFileSync(file, 'utf-8'));
     return Array.isArray(data) ? data : [];
   }
 
   private save(list: StoredSong[]) {
-    writeFileSync(SONGS_FILE, JSON.stringify(list, null, 2));
+    writeFileSync(getDataFile('songs.json'), JSON.stringify(list, null, 2));
   }
 }
