@@ -4,16 +4,23 @@
   "installCommand": "cd web && npm install && cd ../server && npm install",
   "buildCommand": "cd web && npm run build",
   "outputDirectory": "web/out",
-  "functions": {
-    "server/index.ts": {
-      "maxDuration": 60,
-      "includeFiles": "server/src/**"
-    }
-  },
-  "rewrites": [
+  "builds": [
     {
-      "source": "/api/:path*",
-      "destination": "/server/index.ts"
+      "src": "server/index.ts",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "web/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "out"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "server/index.ts"
     }
   ]
 }
