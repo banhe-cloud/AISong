@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import 'dotenv/config';
 import { NestFactory } from '@nestjs/core';
 import { ExpressAdapter, NestExpressApplication } from '@nestjs/platform-express';
-import express from 'express';
+import express = require('express');
 import { AppModule } from './app.module';
 
 let server: express.Application;
