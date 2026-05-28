@@ -1,1 +1,2 @@
-export { default } from '../server/index';
+import 'reflect-metadata';
+export { default } from '../server/dist/vercel';
