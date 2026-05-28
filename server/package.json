@@ -11,9 +11,12 @@
     "@nestjs/core": "^11.1.0",
     "@nestjs/platform-express": "^11.1.0",
     "dotenv": "^16.6.1",
-    "express": "^4.21.2",
+    "express": "4.21.2",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2"
+  },
+  "overrides": {
+    "express": "4.21.2"
   },
   "devDependencies": {
     "@nestjs/cli": "^11.0.0",
