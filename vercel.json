@@ -7,7 +7,7 @@
   "functions": {
     "api/index.ts": {
       "maxDuration": 60,
-      "includeFiles": ["server/dist/**", "server/node_modules/**"]
+      "includeFiles": "server/{dist,node_modules}/**"
     }
   },
   "rewrites": [
