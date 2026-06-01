@@ -71,6 +71,7 @@ export default function Home() {
   const [currentTrack, setCurrentTrack] = useState<{ name: string; url: string } | null>(null)
   const [playKey, setPlayKey] = useState(0)
   const [remaining, setRemaining] = useState<number | null>(null)
+  const [downloadingId, setDownloadingId] = useState<number | null>(null)
 
   async function fetchHistory(page: number) {
     try {
@@ -147,13 +148,28 @@ export default function Home() {
     setIsGenerating(false)
   }
 
-  function downloadAudio(url: string, name: string) {
+  async function downloadAudio(url: string, name: string, id: number) {
     if (!url) return
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `${name || 'music'}.mp3`
-    a.target = '_blank'
-    a.click()
+    const ext = /\.(\w+)(?:\?|$)/.exec(url)?.[1] || 'mp3'
+    const filename = `${name || 'music'}.${ext}`
+    setDownloadingId(id)
+    try {
+      const res = await fetch(
+        apiUrl(`/download?url=${encodeURIComponent(url)}&name=${encodeURIComponent(filename)}`),
+      )
+      if (!res.ok) throw new Error(await parseApiError(res))
+      const blob = await res.blob()
+      const blobUrl = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = blobUrl
+      a.download = filename
+      a.click()
+      URL.revokeObjectURL(blobUrl)
+    } catch (e) {
+      alert(e instanceof Error ? e.message : 'Download failed')
+    } finally {
+      setDownloadingId(null)
+    }
   }
 
   return (
@@ -315,10 +331,10 @@ export default function Home() {
                 </button>
                 <button
                   className="hist-btn"
-                  onClick={() => downloadAudio(item.audioUrl, item.name)}
-                  disabled={!item.audioUrl}
+                  onClick={() => downloadAudio(item.audioUrl, item.name, item.id)}
+                  disabled={!item.audioUrl || downloadingId === item.id}
                 >
-                  Download
+                  {downloadingId === item.id ? 'Downloading...' : 'Download'}
                 </button>
               </div>
             </div>
