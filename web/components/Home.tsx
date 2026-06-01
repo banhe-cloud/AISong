@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import Footer from './Footer'
 import Player from './Player'
 import { apiUrl, parseApiError } from '@/lib/api'
+import { consumeDailyQuota, getDailyRemaining } from '@/lib/quota'
 import { LOGO_ALT, LOGO_SRC } from '@/lib/site'
 
 const PAGE_SIZE = 5
@@ -84,12 +85,7 @@ export default function Home() {
   }
 
   async function fetchQuota() {
-    try {
-      const res = await fetch(apiUrl('/quota'))
-      if (!res.ok) return
-      const data = await res.json()
-      setRemaining(data.remaining)
-    } catch {}
+    setRemaining(getDailyRemaining())
   }
 
   useEffect(() => {
@@ -124,6 +120,10 @@ export default function Home() {
 
   async function handleGenerate() {
     if (isGenerating) return
+    if (getDailyRemaining() <= 0) {
+      alert('No free generations left today')
+      return
+    }
     const { prompt } = resolveChoices(style, mood, theme, themeCustom)
     setIsGenerating(true)
     setLoadingStep(0)
@@ -136,6 +136,7 @@ export default function Home() {
       })
       if (!res.ok) throw new Error(await parseApiError(res))
       const data = await res.json()
+      consumeDailyQuota()
       if (data.audioUrl) loadTrack(data.name, data.audioUrl, false)
       await fetchHistory(1)
     } catch (e) {
