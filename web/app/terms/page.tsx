@@ -1,4 +1,11 @@
 import LegalLayout from '@/components/LegalLayout'
+import { pageMetadata } from '@/lib/metadata'
+
+export const metadata = pageMetadata({
+  title: 'Terms of Service | SongAI',
+  description: 'SongAI terms of service: usage rules, content rights, and limitations.',
+  path: '/terms',
+})
 
 export default function TermsPage() {
   return (

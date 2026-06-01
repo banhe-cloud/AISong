@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
-import { LOGO_PATH, SITE_DESCRIPTION, SITE_TITLE, SITE_URL } from '@/lib/site'
+import { LOGO_PATH, OG_IMAGE_PATH, SITE_DESCRIPTION, SITE_TITLE, SITE_URL } from '@/lib/site'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -28,20 +28,18 @@ export const metadata: Metadata = {
     'short video music',
   ],
   robots: { index: true, follow: true },
-  alternates: { canonical: '/' },
   icons: { icon: LOGO_PATH, apple: LOGO_PATH },
   openGraph: {
     type: 'website',
-    url: '/',
     title: SITE_TITLE,
     description: SITE_DESCRIPTION,
-    images: [LOGO_PATH],
+    images: [{ url: OG_IMAGE_PATH, width: 1200, height: 630, alt: SITE_TITLE }],
   },
   twitter: {
     card: 'summary_large_image',
     title: SITE_TITLE,
     description: SITE_DESCRIPTION,
-    images: [LOGO_PATH],
+    images: [OG_IMAGE_PATH],
   },
 }
 

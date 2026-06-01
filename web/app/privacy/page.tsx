@@ -1,4 +1,11 @@
 import LegalLayout from '@/components/LegalLayout'
+import { pageMetadata } from '@/lib/metadata'
+
+export const metadata = pageMetadata({
+  title: 'Privacy Policy | SongAI',
+  description: 'SongAI privacy policy: what data we collect, how we use it, and your rights.',
+  path: '/privacy',
+})
 
 export default function PrivacyPage() {
   return (

@@ -2,6 +2,8 @@ export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3
 
 export const LOGO_PATH = '/images/logo2.png'
 
+export const OG_IMAGE_PATH = '/images/og-image.png'
+
 export const LOGO_SRC = process.env.NEXT_PUBLIC_LOGO_URL || LOGO_PATH
 
 export const LOGO_ALT = 'SongAI - AI Music Generator Logo'

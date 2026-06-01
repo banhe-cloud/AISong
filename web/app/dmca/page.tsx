@@ -1,4 +1,11 @@
 import LegalLayout from '@/components/LegalLayout'
+import { pageMetadata } from '@/lib/metadata'
+
+export const metadata = pageMetadata({
+  title: 'DMCA Policy | SongAI',
+  description: 'SongAI DMCA policy: how to report copyright infringement and our takedown process.',
+  path: '/dmca',
+})
 
 export default function DmcaPage() {
   return (
