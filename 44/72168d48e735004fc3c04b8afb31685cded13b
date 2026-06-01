@@ -1,0 +1,29 @@
+server/package.json
+  s_c0832bf81dea55::t_3c23f48cb33244 5-7
+server/src/song/song.controller.ts
+  s_c0832bf81dea55::t_c90b907cd0cbfb 1
+  s_c0832bf81dea55::t_10e5a7e9c39f46 37,40,42-46,48-49,51-53,55,57,63-64
+  s_c0832bf81dea55::t_b14692b3ab1477 38-39,41,47,50,54,56,58-62
+web/components/Home.tsx
+  s_c0832bf81dea55::t_b25a2afc39fcbf 151,156-172
+  s_c0832bf81dea55::t_5d9d2089012717 153-154
+  s_c0832bf81dea55::t_7a7842e3e385bc 334-335,337
+  s_c0832bf81dea55::t_451f150c7b437d 155
+  s_c0832bf81dea55::t_6e803e1e5018b6 74
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.10-trip",
+  "base_commit_sha": "4472168d48e735004fc3c04b8afb31685cded13b",
+  "prompts": {},
+  "sessions": {
+    "s_c0832bf81dea55": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "6ec2797a-d309-47d7-a672-a034dc9c91d6",
+        "model": "default"
+      },
+      "human_author": "hban <hban@trip.com>"
+    }
+  }
+}
