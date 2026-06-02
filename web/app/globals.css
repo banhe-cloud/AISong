@@ -226,6 +226,46 @@ body.has-player .card-songs {
   opacity: 0.6;
   cursor: not-allowed;
 }
+.prompt-input {
+  width: 100%;
+  background: var(--card2);
+  border: 1px solid #2a2e42;
+  color: var(--text);
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 14px;
+  line-height: 1.45;
+  resize: vertical;
+  min-height: 72px;
+  font-family: inherit;
+}
+.prompt-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+.advanced-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 8px 0;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 13px;
+  cursor: pointer;
+}
+.advanced-toggle:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.advanced-panel {
+  padding-top: 2px;
+}
+.advanced-panel .field:last-child {
+  margin-bottom: 0;
+}
 .theme-input {
   width: 100%;
   margin-top: 10px;

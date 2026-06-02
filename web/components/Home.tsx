@@ -12,23 +12,14 @@ const PAGE_SIZE = 5
 const LOADING_STEPS = [
   'Submitting your music request...',
   'AI is composing your track...',
-  'Still generating, usually 1–3 minutes...',
+  'Still generating, usually within 1 minute...',
   'Almost there, hang tight...',
 ]
 
 const STYLES = ['Pop', 'Hip-Hop', 'Electronic', 'Lo-fi', 'Rock', 'Cinematic']
 const MOODS = ['Upbeat', 'Chill', 'Melancholic', 'Energetic', 'Romantic']
-const RANDOM = 'Random'
 
 const THEMES = ['Summer', 'Heartbreak', 'Motivation', 'Love', 'Party', 'Night']
-
-function pick<T>(arr: T[]) {
-  return arr[Math.floor(Math.random() * arr.length)]
-}
-
-function buildPrompt(style: string, mood: string, theme: string) {
-  return `${style}, ${mood.toLowerCase()} mood, theme: ${theme}, with vocals`
-}
 
 function formatQuotaRemaining(n: number) {
   if (n <= 0) return 'No free generations left today'
@@ -46,17 +37,34 @@ function formatCreatedAt(iso: string) {
   })
 }
 
-function resolveChoices(style: string, moodLabel: string, theme: string, themeCustom: string) {
-  const s = style
-  const m = moodLabel === RANDOM ? pick(MOODS) : moodLabel
-  const t = themeCustom.trim() || (theme === RANDOM ? pick(THEMES) : theme)
-  return { style: s, mood: m, theme: t, prompt: buildPrompt(s, m, t) }
+function buildFinalPrompt(
+  desc: string,
+  advancedOpen: boolean,
+  style: string,
+  mood: string,
+  theme: string,
+  themeCustom: string,
+) {
+  const d = desc.trim()
+  const parts: string[] = []
+  if (advancedOpen && style) parts.push(style)
+  if (advancedOpen && mood) parts.push(`${mood.toLowerCase()} mood`)
+  if (advancedOpen) {
+    const t = themeCustom.trim() || theme
+    if (t) parts.push(`theme: ${t}`)
+  }
+  const chip = parts.length ? `${parts.join(', ')}, with vocals` : ''
+  if (d && chip) return `${d}, ${chip}`
+  if (d) return `${d}, with vocals`
+  return chip
 }
 
 export default function Home() {
-  const [style, setStyle] = useState('Pop')
-  const [mood, setMood] = useState(RANDOM)
-  const [theme, setTheme] = useState(RANDOM)
+  const [promptInput, setPromptInput] = useState('')
+  const [advancedOpen, setAdvancedOpen] = useState(false)
+  const [style, setStyle] = useState('')
+  const [mood, setMood] = useState('')
+  const [theme, setTheme] = useState('')
   const [themeCustom, setThemeCustom] = useState('')
   const [isGenerating, setIsGenerating] = useState(false)
   const [loadingStep, setLoadingStep] = useState(0)
@@ -125,7 +133,11 @@ export default function Home() {
       alert('No free generations left today')
       return
     }
-    const { prompt } = resolveChoices(style, mood, theme, themeCustom)
+    const prompt = buildFinalPrompt(promptInput, advancedOpen, style, mood, theme, themeCustom)
+    if (!prompt.trim()) {
+      alert('Describe your track or pick options in Advanced')
+      return
+    }
     setIsGenerating(true)
     setLoadingStep(0)
     setPending({ prompt, startedAt: Date.now() })
@@ -193,7 +205,7 @@ export default function Home() {
         <h1>SongAI — AI Music Generator for TikTok &amp; Reels</h1>
         <p className="hero-lead">
           Free AI song generator — create original AI music for TikTok, Instagram Reels, and short-form
-          video in about 1–3 minutes.
+          video in under 1 minute.
         </p>
         <p className="seo-intro">
           SongAI is an AI music generator built for creators who need royalty-friendly tracks fast. Use our
@@ -206,83 +218,92 @@ export default function Home() {
           <h3>Create Your Track</h3>
           <div className="card-scroll">
           <div className="field">
-            <label className="field-label">Style</label>
-            <div className="opt-row">
-              {STYLES.map((s) => (
-                <button
-                  key={s}
-                  type="button"
-                  className={`opt-chip${style === s ? ' active' : ''}`}
-                  disabled={isGenerating}
-                  onClick={() => setStyle(s)}
-                >
-                  {s}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div className="field">
-            <label className="field-label">Mood</label>
-            <div className="opt-row">
-              <button
-                type="button"
-                className={`opt-chip${mood === RANDOM ? ' active' : ''}`}
-                disabled={isGenerating}
-                onClick={() => setMood(RANDOM)}
-              >
-                {RANDOM}
-              </button>
-              {MOODS.map((m) => (
-                <button
-                  key={m}
-                  type="button"
-                  className={`opt-chip${mood === m ? ' active' : ''}`}
-                  disabled={isGenerating}
-                  onClick={() => setMood(m)}
-                >
-                  {m}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div className="field">
-            <label className="field-label">Theme</label>
-            <div className="opt-row">
-              <button
-                type="button"
-                className={`opt-chip${theme === RANDOM && !themeCustom ? ' active' : ''}`}
-                disabled={isGenerating}
-                onClick={() => {
-                  setTheme(RANDOM)
-                  setThemeCustom('')
-                }}
-              >
-                {RANDOM}
-              </button>
-              {THEMES.map((t) => (
-                <button
-                  key={t}
-                  type="button"
-                  className={`opt-chip${theme === t && !themeCustom ? ' active' : ''}`}
-                  disabled={isGenerating}
-                  onClick={() => {
-                    setTheme(t)
-                    setThemeCustom('')
-                  }}
-                >
-                  {t}
-                </button>
-              ))}
-            </div>
-            <input
-              className="theme-input"
-              value={themeCustom}
-              onChange={(e) => setThemeCustom(e.target.value)}
+            <label className="field-label">Describe your track</label>
+            <textarea
+              className="prompt-input"
+              value={promptInput}
+              onChange={(e) => setPromptInput(e.target.value)}
               disabled={isGenerating}
-              placeholder="Custom theme (e.g., summer road trip)"
-              maxLength={40}
+              placeholder="e.g. upbeat pop for a summer TikTok vlog"
+              maxLength={200}
+              rows={3}
             />
           </div>
+          <button
+            type="button"
+            className="advanced-toggle"
+            disabled={isGenerating}
+            onClick={() => setAdvancedOpen((o) => !o)}
+          >
+            Advanced options <span className="advanced-chevron">{advancedOpen ? '▲' : '▼'}</span>
+          </button>
+          {advancedOpen && (
+            <div className="advanced-panel">
+              <div className="field">
+                <label className="field-label">Style</label>
+                <div className="opt-row">
+                  {STYLES.map((s) => (
+                    <button
+                      key={s}
+                      type="button"
+                      className={`opt-chip${style === s ? ' active' : ''}`}
+                      disabled={isGenerating}
+                      onClick={() => setStyle(style === s ? '' : s)}
+                    >
+                      {s}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="field">
+                <label className="field-label">Mood</label>
+                <div className="opt-row">
+                  {MOODS.map((m) => (
+                    <button
+                      key={m}
+                      type="button"
+                      className={`opt-chip${mood === m ? ' active' : ''}`}
+                      disabled={isGenerating}
+                      onClick={() => setMood(mood === m ? '' : m)}
+                    >
+                      {m}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="field">
+                <label className="field-label">Theme</label>
+                <div className="opt-row">
+                  {THEMES.map((t) => (
+                    <button
+                      key={t}
+                      type="button"
+                      className={`opt-chip${theme === t && !themeCustom ? ' active' : ''}`}
+                      disabled={isGenerating}
+                      onClick={() => {
+                        if (theme === t && !themeCustom) {
+                          setTheme('')
+                        } else {
+                          setTheme(t)
+                          setThemeCustom('')
+                        }
+                      }}
+                    >
+                      {t}
+                    </button>
+                  ))}
+                </div>
+                <input
+                  className="theme-input"
+                  value={themeCustom}
+                  onChange={(e) => setThemeCustom(e.target.value)}
+                  disabled={isGenerating}
+                  placeholder="Custom theme (e.g., summer road trip)"
+                  maxLength={40}
+                />
+              </div>
+            </div>
+          )}
           </div>
           <div className="card-footer">
             {remaining !== null && <p className="quota-tip">{formatQuotaRemaining(remaining)}</p>}
@@ -322,6 +343,13 @@ export default function Home() {
                 <span className="hist-prompt">{item.prompt}</span>
               </div>
               <div>
+                <button
+                  className="hist-btn"
+                  onClick={() => window.open(item.audioUrl, '_blank', 'noopener,noreferrer')}
+                  disabled={!item.audioUrl}
+                >
+                  Open
+                </button>
                 <button
                   className="hist-btn"
                   onClick={() => loadTrack(item.name, item.audioUrl, true)}
