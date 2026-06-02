@@ -1,0 +1,33 @@
+web/components/Home.tsx
+  s_c0832bf81dea55::t_815e6e6c022bb5 137-140
+  s_c0832bf81dea55::t_5cd1b1948e87c4 40-48,58
+  s_c0832bf81dea55::t_4c736ff84432b5 267
+  s_c0832bf81dea55::t_b4a2c39ddca17c 284-289
+  s_c0832bf81dea55::t_cdbf512484f8c0 251
+  s_c0832bf81dea55::t_cc06ff233210e8 348-352
+  s_c0832bf81dea55::t_a6f807e52b18d1 208
+  s_c0832bf81dea55::t_8ddd0005a501c8 15
+  s_c0832bf81dea55::t_98410e2aa08747 65-67
+  s_c0832bf81dea55::t_e674157c0e1cf2 136
+  s_c0832bf81dea55::t_fcfca027995624 221-225,227-229,232-250,252-266,268-283,290-306
+  s_c0832bf81dea55::t_8452135ca22894 63-64
+  s_c0832bf81dea55::t_595c500c7d45bf 49-57,59
+web/app/globals.css
+  s_c0832bf81dea55::t_cdd79de20f680e 229-268
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.10-trip",
+  "base_commit_sha": "cd3b9996476a578532c5bd1b938a3bd9bbe0c0a9",
+  "prompts": {},
+  "sessions": {
+    "s_c0832bf81dea55": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "6ec2797a-d309-47d7-a672-a034dc9c91d6",
+        "model": "default"
+      },
+      "human_author": "hban <hban@trip.com>"
+    }
+  }
+}
