@@ -1,0 +1,30 @@
+server/src/lyrics/lyrics-clean.ts
+  s_c0832bf81dea55::t_86a0cb03518aec 6-9,18-25,27-29
+server/src/lyrics/lyrics.service.ts
+  s_c0832bf81dea55::t_6b16e0fe6a4591 43
+web/components/Home.tsx
+  s_c0832bf81dea55::t_25dcc8e517f0fe 164-174
+  s_c0832bf81dea55::t_73beee83957b01 7
+  s_c0832bf81dea55::t_c244b74f745fc0 107
+  s_c0832bf81dea55::t_ca4b47814dfd63 465
+  s_c0832bf81dea55::t_38306e3cd21903 476
+  s_c0832bf81dea55::t_2d087e89a68df0 93-98
+web/lib/history.ts
+  s_c0832bf81dea55::t_934982c0b1033f 1-40
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.10-trip",
+  "base_commit_sha": "11d2254dee9c8fc25f916b328db625cdf0c4ec68",
+  "prompts": {},
+  "sessions": {
+    "s_c0832bf81dea55": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "6ec2797a-d309-47d7-a672-a034dc9c91d6",
+        "model": "default"
+      },
+      "human_author": "hban <hban@trip.com>"
+    }
+  }
+}
