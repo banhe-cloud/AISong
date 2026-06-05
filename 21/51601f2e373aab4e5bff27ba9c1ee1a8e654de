@@ -1,0 +1,73 @@
+server/src/song/song.controller.ts
+  s_c0832bf81dea55::t_80634db511f731 42
+  s_c0832bf81dea55::t_819e5a69fe2d34 30-34
+  s_c0832bf81dea55::t_0ffe42d6354862 36-39
+web/app/globals.css
+  s_c0832bf81dea55::t_b93bc56eb7be0b 10,17-19,27-30,34
+  s_c0832bf81dea55::t_3f562431ebab23 147-173
+  s_c0832bf81dea55::t_b206664a013075 125,129,131,133-134,136
+  s_c0832bf81dea55::t_dcf72c1f03b73f 68
+  s_c0832bf81dea55::t_8de84c8b3090a7 726,729-730
+  s_c0832bf81dea55::t_5c7ed0a43ec7c2 771-772
+  s_c0832bf81dea55::t_e9c6356d34a5a7 679-681,686-688
+  s_c0832bf81dea55::t_1c6a77730ae397 670-672,676
+  s_c0832bf81dea55::t_f3abebbaa55a89 337-338
+web/components/Home.tsx
+  s_c0832bf81dea55::t_5ba71da7b1f66e 68-69
+  s_c0832bf81dea55::t_08bd96593bcb6c 264
+  s_c0832bf81dea55::t_056cd75bd29fe8 269,290-294,296-304,311-313
+  s_c0832bf81dea55::t_35a22984e7333a 3
+  s_c0832bf81dea55::t_7661d9a4f1e586 25-27
+  s_c0832bf81dea55::t_5bcb7d4c0aa04a 114,119,129
+  s_c0832bf81dea55::t_1e02b12361e89e 75
+  s_c0832bf81dea55::t_95a2a59ee1ab91 158-162
+  s_c0832bf81dea55::t_5032ae07ee0fc3 179-183
+  s_c0832bf81dea55::t_69ec618f581dd8 177,184-199
+  s_c0832bf81dea55::t_f5e212e091c7ae 149,152-153
+  s_c0832bf81dea55::t_39f38637b5985b 60,62
+  s_c0832bf81dea55::t_ae403a0642b330 270-289,295,305-310
+  s_c0832bf81dea55::t_b5bae6ff13f1ec 24
+  s_c0832bf81dea55::t_a23bda2b2b10b4 78,80
+  s_c0832bf81dea55::t_6e54824c2f5ee3 178
+server/src/song/song.service.ts
+  s_c0832bf81dea55::t_cbaca3dd2fe92c 24-26
+  s_c0832bf81dea55::t_a746c76d14a528 14-18
+  s_c0832bf81dea55::t_78afdab9544031 19-23,27
+server/src/piapi/piapi.service.ts
+  s_c0832bf81dea55::t_39c401324130d7 2
+  s_c0832bf81dea55::t_6b6a5f25aafb94 31-32,34,37-42,47
+  s_c0832bf81dea55::t_314550ae9aadd0 33
+  s_c0832bf81dea55::t_1f59ad4e3d1219 43,54-56
+server/src/lyrics/lyrics-clean.ts
+  s_c0832bf81dea55::t_af61c26e9dda69 2,4-5,12-14,17-33
+  s_c0832bf81dea55::t_10f9e6b6556d7f 1,3,6-11,15-16
+server/src/lyrics/lyrics.service.ts
+  s_c0832bf81dea55::t_c1df5eeac1b44e 80
+  s_c0832bf81dea55::t_41d4bf620e89e3 81-82
+  s_c0832bf81dea55::t_c399f22c01258a 70-73
+  s_c0832bf81dea55::t_70f309dcfa4536 1,11
+  s_c0832bf81dea55::t_ab8ca27084500f 41,43,52-53,55-56,59-60,62,66
+  s_c0832bf81dea55::t_ebc93a56d1ba3a 63-65,67
+  s_c0832bf81dea55::t_4e95d34b0de869 33,37-39,42
+  s_c0832bf81dea55::t_1cb918005d557b 6-7
+  s_c0832bf81dea55::t_5a0ed978e12f09 2
+server/src/quota/quota.service.ts
+  s_c0832bf81dea55::t_655bbada97dc00 7-8,12-14
+  s_c0832bf81dea55::t_b26fcb07527a84 22
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.10-trip",
+  "base_commit_sha": "2151601f2e373aab4e5bff27ba9c1ee1a8e654de",
+  "prompts": {},
+  "sessions": {
+    "s_c0832bf81dea55": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "6ec2797a-d309-47d7-a672-a034dc9c91d6",
+        "model": "default"
+      },
+      "human_author": "hban <hban@trip.com>"
+    }
+  }
+}
