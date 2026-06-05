@@ -1,11 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { cleanLyricBody } from './lyrics-clean';
 
 @Injectable()
 export class LyricsService {
+  private readonly maxSec = 95;
+
   async generate(prompt: string) {
     const aiLyrics = await this.fromAI(prompt);
     if (aiLyrics) return aiLyrics;
-    return this.fallbackLyrics(prompt);
+    throw new HttpException('Failed to generate lyrics', HttpStatus.BAD_GATEWAY);
   }
 
   private async fromAI(prompt: string) {
@@ -27,19 +30,17 @@ export class LyricsService {
           {
             role: 'system',
             content:
-              'You are a professional English songwriter. Always write lyrics in English only.',
+              'You are an award-winning English songwriter. Write lyrics that sound like real hit songs — catchy, emotional, and easy to sing.',
           },
           {
             role: 'user',
-            content: `Write English lyrics for: ${prompt}
+            content: `Write song lyrics for: ${prompt}
 
-Rules:
-- Lyrics MUST be in English only (no Chinese or other languages)
-- Output 10-12 lines ONLY
-- Each line MUST be: [mm:ss.xx] lyric text
-- Start at [00:10.00], each next line +7 seconds (e.g. [00:17.00], [00:24.00])
-- Include verse and chorus feel, suitable for singing
-- No titles, no explanation, no markdown`,
+Prioritize quality: strong chorus hook, vivid imagery, natural rhythm, emotional pull. Match the genre and mood.
+
+Verse-chorus song, repeat the chorus. One lyric line per line. Keep it short enough to sing within 1:35.
+
+English only. Plain lyrics only. No timestamps, titles, or explanations.`,
           },
         ],
         temperature: 0.9,
@@ -48,49 +49,37 @@ Rules:
 
     const data = await res.json();
     const text = data.choices?.[0]?.message?.content || '';
-    const timed = this.parseTimedLyrics(text);
-    if (timed) return timed;
+    const plain = this.parsePlainLyrics(text);
+    if (plain.length < 4) return null;
 
-    const plain = text
-      .split('\n')
-      .map((l) => l.replace(/^[-*\d.]+\s*/, '').trim())
-      .filter((l) => l && !l.startsWith('[') && l.length < 80);
-    if (plain.length >= 4) return this.toTimedLyrics(plain);
-    return null;
+    const timed = this.toTimedLyrics(plain);
+    return timed.split('\n').filter(Boolean).length >= 6 ? timed : null;
   }
 
-  private parseTimedLyrics(text: string) {
-    const lines = text
+  private parsePlainLyrics(text: string) {
+    return text
       .split('\n')
-      .map((l) => l.trim())
-      .filter((l) => /^\[\d{2}:\d{2}\.\d{2}\]/.test(l));
-    return lines.length >= 4 ? lines.join('\n') : null;
+      .map((l) =>
+        cleanLyricBody(
+          l.replace(/^[-*\d.]+\s*/, '').replace(/^\[\d{2}:\d{2}\.\d{2}\]\s*/, ''),
+        ),
+      )
+      .filter((l) => l && l.length < 80);
   }
 
-  private fallbackLyrics(prompt: string) {
-    const theme = prompt.trim().slice(0, 60) || 'tonight we shine';
-    return this.toTimedLyrics([
-      'Under the lights we start to move',
-      'Hearts beat fast as the night comes alive',
-      'We sing and dance we thrive',
-      `Oh oh ${theme} in the fire tonight`,
-      'Raise your voice into the sky',
-      'This is our time to fly',
-      'Every step echoes on the floor',
-      'Hands up high never looking back',
-      `Oh oh ${theme} burning bright`,
-      'Raise your voice into the sky',
-    ]);
+  private stamp(sec: number, line: string) {
+    const m = Math.floor(sec / 60);
+    const s = sec % 60;
+    return `[${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}.00] ${line}`;
   }
 
   private toTimedLyrics(lines: string[]) {
     let sec = 10;
     const out: string[] = [];
     for (const line of lines) {
-      const m = Math.floor(sec / 60);
-      const s = sec % 60;
-      out.push(`[${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}.00] ${line}`);
-      sec += 7;
+      if (sec > this.maxSec) break;
+      out.push(this.stamp(sec, line));
+      sec += 6;
     }
     return out.join('\n');
   }

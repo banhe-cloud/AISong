@@ -4,9 +4,14 @@ import { getDataDir, getDataFile } from '../data-path';
 
 export const DAILY_LIMIT = 5;
 
+const QUOTA_ENABLED = process.env.QUOTA_ENABLED === 'true';
+
 @Injectable()
 export class QuotaService {
   getQuota(ip: string) {
+    if (!QUOTA_ENABLED) {
+      return { limit: DAILY_LIMIT, used: 0, remaining: DAILY_LIMIT };
+    }
     const today = new Date().toISOString().slice(0, 10);
     const data = this.load();
     const used = data[today]?.[ip] || 0;
@@ -14,6 +19,7 @@ export class QuotaService {
   }
 
   checkAndConsume(ip: string) {
+    if (!QUOTA_ENABLED) return;
     const today = new Date().toISOString().slice(0, 10);
     const data = this.load();
     if (!data[today]) data[today] = {};

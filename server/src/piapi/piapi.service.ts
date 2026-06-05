@@ -1,4 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { cleanLyricsForModel } from '../lyrics/lyrics-clean';
 
 @Injectable()
 export class PiapiService {
@@ -27,23 +28,32 @@ export class PiapiService {
     return res.json();
   }
 
-  async generateMusic(prompt: string, lyrics: string) {
-    if (!lyrics?.trim() || lyrics.trim() === '[inst]') {
+  async generateMusic(prompt: string, lyrics: string, vocalType?: string) {
+    const instrumental = vocalType === 'instrumental';
+    const finalLyrics = instrumental ? '[inst]' : cleanLyricsForModel(lyrics?.trim() || '');
+    if (!instrumental && !finalLyrics) {
       throw new HttpException('lyrics required for vocal track', HttpStatus.BAD_REQUEST);
     }
-    const stylePrompt = `${prompt}, vocal, singing voice, with vocals`;
-    const createRes = await this.post('/api/v1/task', {
+    let stylePrompt = prompt;
+    if (instrumental) {
+      stylePrompt = `${prompt}, instrumental, no vocals, background music`;
+    } else {
+      stylePrompt = `${prompt}, vocal, singing voice, with vocals`;
+    }
+    const payload = {
       model: 'Qubico/diffrhythm',
       task_type: this.taskType,
       input: {
-        lyrics,
+        lyrics: finalLyrics,
         style_prompt: stylePrompt,
         style_audio: '',
       },
       config: {
         webhook_config: { endpoint: '', secret: '' },
       },
-    });
+    };
+    console.log('[PiAPI] generateMusic', { prompt, vocalType, payload });
+    const createRes = await this.post('/api/v1/task', payload);
 
     if (createRes.code !== 200) {
       throw new HttpException(

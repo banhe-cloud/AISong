@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Footer from './Footer'
 import Player from './Player'
 import { apiUrl, parseApiError } from '@/lib/api'
@@ -20,6 +20,10 @@ const STYLES = ['Pop', 'Hip-Hop', 'Electronic', 'Lo-fi', 'Rock', 'Cinematic']
 const MOODS = ['Upbeat', 'Chill', 'Melancholic', 'Energetic', 'Romantic']
 
 const THEMES = ['Summer', 'Heartbreak', 'Motivation', 'Love', 'Party', 'Night']
+
+const VOCALS = [{ id: 'instrumental', label: 'Instrumental' }] as const
+
+type VocalType = (typeof VOCALS)[number]['id'] | ''
 
 function formatQuotaRemaining(n: number) {
   if (n <= 0) return 'No free generations left today'
@@ -53,23 +57,27 @@ function buildFinalPrompt(
     const t = themeCustom.trim() || theme
     if (t) parts.push(`theme: ${t}`)
   }
-  const chip = parts.length ? `${parts.join(', ')}, with vocals` : ''
+  const chip = parts.join(', ')
   if (d && chip) return `${d}, ${chip}`
-  if (d) return `${d}, with vocals`
+  if (d) return d
   return chip
 }
 
 export default function Home() {
   const [promptInput, setPromptInput] = useState('')
+  const [lyricsInput, setLyricsInput] = useState('')
+  const [isLyricsLoading, setIsLyricsLoading] = useState(false)
   const [advancedOpen, setAdvancedOpen] = useState(false)
   const [style, setStyle] = useState('')
   const [mood, setMood] = useState('')
   const [theme, setTheme] = useState('')
   const [themeCustom, setThemeCustom] = useState('')
+  const [vocalType, setVocalType] = useState<VocalType>('')
   const [isGenerating, setIsGenerating] = useState(false)
   const [loadingStep, setLoadingStep] = useState(0)
-  const [pending, setPending] = useState<{ prompt: string; startedAt: number } | null>(null)
+  const [pending, setPending] = useState<{ prompt: string } | null>(null)
   const [elapsedSec, setElapsedSec] = useState(0)
+  const startedAtRef = useRef(0)
   const [history, setHistory] = useState<
     { id: number; name: string; prompt: string; audioUrl: string; createdAt: string }[]
   >([])
@@ -103,12 +111,12 @@ export default function Home() {
   }, [])
 
   useEffect(() => {
-    if (!pending) {
+    if (!isGenerating) {
       setElapsedSec(0)
       setLoadingStep(0)
       return
     }
-    const tick = () => setElapsedSec(Math.floor((Date.now() - pending.startedAt) / 1000))
+    const tick = () => setElapsedSec(Math.floor((Date.now() - startedAtRef.current) / 1000))
     tick()
     const secTimer = setInterval(tick, 1000)
     const stepTimer = setInterval(() => {
@@ -118,7 +126,7 @@ export default function Home() {
       clearInterval(secTimer)
       clearInterval(stepTimer)
     }
-  }, [pending])
+  }, [isGenerating])
 
   function loadTrack(name: string, url: string, play: boolean) {
     if (!url) return
@@ -138,14 +146,20 @@ export default function Home() {
       alert('Describe your track or pick options in Advanced')
       return
     }
+    startedAtRef.current = Date.now()
     setIsGenerating(true)
     setLoadingStep(0)
-    setPending({ prompt, startedAt: Date.now() })
+    setElapsedSec(0)
+    setPending({ prompt })
     try {
       const res = await fetch(apiUrl('/generate'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt }),
+        body: JSON.stringify({
+          prompt,
+          lyrics: lyricsInput.trim() || undefined,
+          vocalType: vocalType || undefined,
+        }),
       })
       if (!res.ok) throw new Error(await parseApiError(res))
       const data = await res.json()
@@ -158,6 +172,29 @@ export default function Home() {
     setPending(null)
     fetchQuota()
     setIsGenerating(false)
+  }
+
+  async function handleRandomLyrics() {
+    if (isLyricsLoading || isGenerating || vocalType === 'instrumental') return
+    const prompt = buildFinalPrompt(promptInput, advancedOpen, style, mood, theme, themeCustom)
+    if (!prompt.trim()) {
+      alert('Describe your track or pick options in Advanced')
+      return
+    }
+    setIsLyricsLoading(true)
+    try {
+      const res = await fetch(apiUrl('/lyrics'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt }),
+      })
+      if (!res.ok) throw new Error(await parseApiError(res))
+      const data = await res.json()
+      setLyricsInput(data.lyrics || '')
+    } catch (e) {
+      alert(e instanceof Error ? e.message : 'Failed to generate lyrics')
+    }
+    setIsLyricsLoading(false)
   }
 
   async function downloadAudio(url: string, name: string, id: number) {
@@ -224,9 +261,54 @@ export default function Home() {
               value={promptInput}
               onChange={(e) => setPromptInput(e.target.value)}
               disabled={isGenerating}
-              placeholder="e.g. upbeat pop for a summer TikTok vlog"
+              placeholder="e.g. 118 bpm upbeat pop, bright synth hook, punchy kick, summer TikTok vlog energy"
               maxLength={200}
               rows={3}
+            />
+          </div>
+          <div className="field">
+            <label className="field-label">Voice</label>
+            <div className="opt-row">
+              {VOCALS.map((v) => (
+                <button
+                  key={v.id}
+                  type="button"
+                  className={`opt-chip${vocalType === v.id ? ' active' : ''}`}
+                  disabled={isGenerating}
+                  onClick={() => {
+                    const next = vocalType === v.id ? '' : v.id
+                    setVocalType(next)
+                    if (next === 'instrumental') setLyricsInput('')
+                  }}
+                >
+                  {v.label}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="field">
+            <div className="field-head">
+              <label className="field-label">Lyrics</label>
+              <button
+                type="button"
+                className="lyrics-random-btn"
+                disabled={isGenerating || isLyricsLoading || vocalType === 'instrumental'}
+                onClick={handleRandomLyrics}
+              >
+                {isLyricsLoading ? 'Generating...' : 'Random Lyrics'}
+              </button>
+            </div>
+            <textarea
+              className="prompt-input lyrics-input"
+              value={lyricsInput}
+              onChange={(e) => setLyricsInput(e.target.value)}
+              disabled={isGenerating || vocalType === 'instrumental'}
+              placeholder={
+                vocalType === 'instrumental'
+                  ? 'Not needed for instrumental'
+                  : 'Optional — click Random Lyrics or paste your own'
+              }
+              rows={5}
             />
           </div>
           <button

@@ -27,10 +27,19 @@ export class SongController {
     return this.songService.listHistory(this.getClientIp(req), p, l);
   }
 
+  @Post('lyrics')
+  lyrics(@Body() body: { prompt: string }) {
+    return this.songService.generateLyrics(body.prompt);
+  }
+
   @Post('generate')
-  generate(@Body() body: { prompt: string }, @Req() req: Request) {
+  generate(
+    @Body() body: { prompt: string; lyrics?: string; vocalType?: string },
+    @Req() req: Request,
+  ) {
     const ip = this.getClientIp(req);
     this.quotaService.checkAndConsume(ip);
+    console.log('[generate]', { ip, prompt: body.prompt, vocalType: body.vocalType, hasLyrics: !!body.lyrics?.trim() });
     return this.songService.generate(body, ip);
   }
 

@@ -11,9 +11,20 @@ export class SongService {
     private readonly history: SongHistoryService,
   ) {}
 
-  async generate(body: { prompt: string }, ip: string) {
-    const lyrics = await this.lyricsService.generate(body.prompt);
-    const musicRes = await this.piapi.generateMusic(body.prompt, lyrics);
+  async generateLyrics(prompt: string) {
+    const lyrics = await this.lyricsService.generate(prompt);
+    return { lyrics };
+  }
+
+  async generate(
+    body: { prompt: string; lyrics?: string; vocalType?: string },
+    ip: string,
+  ) {
+    const instrumental = body.vocalType === 'instrumental';
+    const lyrics = instrumental
+      ? '[inst]'
+      : body.lyrics?.trim() || (await this.lyricsService.generate(body.prompt));
+    const musicRes = await this.piapi.generateMusic(body.prompt, lyrics, body.vocalType);
 
     const id = Date.now();
     const name = `Auto Music #${String(id).slice(-4)}`;

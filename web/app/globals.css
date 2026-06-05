@@ -7,14 +7,16 @@
   --text: #e5e7eb;
   --muted: #9ca3af;
   --success: #22c55e;
+  --player-h: 0px;
 }
 * {
   box-sizing: border-box;
 }
 html,
 body {
-  height: 100%;
-  overflow: hidden;
+  min-height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 body {
   margin: 0;
@@ -22,18 +24,18 @@ body {
   background: var(--bg);
   color: var(--text);
 }
+body.has-player {
+  --player-h: 72px;
+  padding-bottom: var(--player-h);
+}
 .page {
   width: 100%;
   max-width: 1200px;
-  height: 100vh;
+  min-height: 100dvh;
   margin: 0 auto;
   padding: 12px 20px 28px;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
-}
-body.has-player .page {
-  height: calc(100vh - 72px);
 }
 .page-header {
   display: flex;
@@ -63,8 +65,7 @@ body.has-player .page {
 }
 .page-hero {
   text-align: center;
-  padding: 6px 0 10px;
-  flex-shrink: 0;
+  padding: 4px 0 12px;
 }
 .page-hero h1 {
   font-size: 32px;
@@ -91,10 +92,7 @@ body.has-player .page {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
-  flex: 1;
-  min-height: 0;
   align-items: start;
-  align-content: start;
 }
 .header-tag {
   color: var(--muted);
@@ -108,10 +106,6 @@ body.has-player .page {
 }
 .page-main {
   flex: 1;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
 }
 .card {
   background: var(--card);
@@ -119,11 +113,8 @@ body.has-player .page {
   padding: 14px;
   border: 1px solid #1f2233;
   width: 100%;
-  height: auto;
-  max-height: 100%;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
 }
 .card h3 {
   margin: 0 0 10px;
@@ -131,35 +122,18 @@ body.has-player .page {
   flex-shrink: 0;
 }
 .card-scroll {
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-}
-.card-create {
-  max-height: none;
-}
-.card-create .card-scroll {
-  flex: 0 0 auto;
-  overflow: visible;
+  flex: none;
 }
 .card-footer {
   flex-shrink: 0;
+  margin-top: 12px;
   padding-top: 12px;
+  border-top: 1px solid #1f2233;
 }
-.card-create .card-footer {
-  margin-top: 0;
-  padding-top: 0;
-}
-.card-songs {
-  max-height: calc(100vh - 168px);
-}
-body.has-player .card-songs {
-  max-height: calc(100vh - 72px - 168px);
-}
-.hist-list {
-  flex: 1;
-  min-height: 0;
+.card-songs .hist-list {
+  max-height: min(480px, 55vh);
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 .field {
   margin-bottom: 10px;
@@ -169,6 +143,33 @@ body.has-player .card-songs {
   font-size: 13px;
   color: var(--muted);
   margin-bottom: 8px;
+}
+.field-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.field-head .field-label {
+  margin-bottom: 0;
+}
+.lyrics-random-btn {
+  background: var(--card2);
+  border: 1px solid #2a2e42;
+  color: var(--text);
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.lyrics-random-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.lyrics-input {
+  min-height: 100px;
 }
 .opt-row {
   display: flex;
@@ -332,10 +333,9 @@ body.has-player .card-songs {
   margin: 10px 0 0;
 }
 .site-footer {
-  flex-shrink: 0;
   text-align: center;
-  padding: 12px 8px 0;
-  margin-top: 10px;
+  padding: 20px 8px 8px;
+  margin-top: 16px;
 }
 .site-footer-links {
   font-size: 11px;
@@ -563,9 +563,6 @@ body.has-player .card-songs {
     transform: rotate(360deg);
   }
 }
-body.has-player {
-  padding-bottom: 0;
-}
 .player-bar {
   position: fixed;
   left: 0;
@@ -670,35 +667,25 @@ body.has-player {
 }
 
 @media (max-width: 768px) {
-  html,
-  body {
-    height: auto;
-    overflow-x: hidden;
-    overflow-y: auto;
+  body.has-player {
+    --player-h: calc(64px + env(safe-area-inset-bottom));
+    padding-bottom: var(--player-h);
   }
 
   .page {
-    height: auto;
-    min-height: 100dvh;
-    overflow: visible;
-    padding: 10px 14px 20px;
-    padding-bottom: max(20px, env(safe-area-inset-bottom));
+    padding: 10px 14px 16px;
   }
 
-  body.has-player .page {
-    height: auto;
-    min-height: 100dvh;
-    padding-bottom: calc(72px + env(safe-area-inset-bottom));
-  }
-
-  .page-main {
-    flex: none;
-    min-height: 0;
-    overflow: visible;
+  .page-header {
+    flex-wrap: wrap;
+    gap: 6px;
   }
 
   .header-tag {
     font-size: 11px;
+    width: 100%;
+    text-align: right;
+    white-space: normal;
   }
 
   .logo-img {
@@ -733,21 +720,14 @@ body.has-player {
 
   .card {
     padding: 12px;
-    max-height: none;
-  }
-
-  .card-songs {
-    max-height: none;
   }
 
   .card-songs .hist-list {
-    max-height: 50vh;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
+    max-height: 42vh;
   }
 
-  .card-create .card-scroll {
-    max-height: none;
+  .lyrics-input {
+    min-height: 80px;
   }
 
   .opt-chip {
@@ -788,8 +768,8 @@ body.has-player {
   }
 
   .site-footer {
-    padding-top: 8px;
-    margin-top: 8px;
+    padding: 16px 8px 4px;
+    margin-top: 12px;
   }
 
   .site-footer-links {
