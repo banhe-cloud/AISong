@@ -40,7 +40,7 @@ Prioritize quality: strong chorus hook, vivid imagery, natural rhythm, emotional
 
 Verse-chorus song, repeat the chorus. One lyric line per line. Keep it short enough to sing within 1:35.
 
-English only. Plain lyrics only. No timestamps, titles, or explanations.`,
+English only. Plain lyrics only. No timestamps, titles, section labels like [Verse] or (Chorus), or explanations.`,
           },
         ],
         temperature: 0.9,

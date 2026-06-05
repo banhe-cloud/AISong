@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import Footer from './Footer'
 import Player from './Player'
 import { apiUrl, parseApiError } from '@/lib/api'
+import { addSong, listSongs } from '@/lib/history'
 import { consumeDailyQuota, getDailyRemaining } from '@/lib/quota'
 import { LOGO_ALT, LOGO_SRC } from '@/lib/site'
 
@@ -89,16 +90,12 @@ export default function Home() {
   const [remaining, setRemaining] = useState<number | null>(null)
   const [downloadingId, setDownloadingId] = useState<number | null>(null)
 
-  async function fetchHistory(page: number) {
-    try {
-      const res = await fetch(apiUrl(`/songs?page=${page}&limit=${PAGE_SIZE}`))
-      if (!res.ok) return
-      const data = await res.json()
-      setHistory(data.items || [])
-      setHistoryPage(data.page || 1)
-      setHistoryTotalPages(data.totalPages || 1)
-      setHistoryTotal(data.total || 0)
-    } catch {}
+  function loadHistory(page: number) {
+    const data = listSongs(page, PAGE_SIZE)
+    setHistory(data.items)
+    setHistoryPage(data.page)
+    setHistoryTotalPages(data.totalPages)
+    setHistoryTotal(data.total)
   }
 
   async function fetchQuota() {
@@ -107,7 +104,7 @@ export default function Home() {
 
   useEffect(() => {
     fetchQuota()
-    fetchHistory(1)
+    loadHistory(1)
   }, [])
 
   useEffect(() => {
@@ -164,8 +161,17 @@ export default function Home() {
       if (!res.ok) throw new Error(await parseApiError(res))
       const data = await res.json()
       consumeDailyQuota()
-      if (data.audioUrl) loadTrack(data.name, data.audioUrl, false)
-      await fetchHistory(1)
+      if (data.audioUrl) {
+        loadTrack(data.name, data.audioUrl, false)
+        addSong({
+          id: data.id,
+          name: data.name,
+          prompt,
+          audioUrl: data.audioUrl,
+          createdAt: new Date().toISOString(),
+        })
+        loadHistory(1)
+      }
     } catch (e) {
       alert(e instanceof Error ? e.message : 'Generate failed')
     }
@@ -456,7 +462,7 @@ export default function Home() {
                 type="button"
                 className="pager-btn"
                 disabled={historyPage <= 1 || isGenerating}
-                onClick={() => fetchHistory(historyPage - 1)}
+                onClick={() => loadHistory(historyPage - 1)}
               >
                 Previous
               </button>
@@ -467,7 +473,7 @@ export default function Home() {
                 type="button"
                 className="pager-btn"
                 disabled={historyPage >= historyTotalPages || isGenerating}
-                onClick={() => fetchHistory(historyPage + 1)}
+                onClick={() => loadHistory(historyPage + 1)}
               >
                 Next
               </button>

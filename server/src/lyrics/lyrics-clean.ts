@@ -3,6 +3,10 @@ function isBracketTag(text: string) {
   return /^\[[^\]]+\]$/.test(t) && !/^\[\d{2}:\d{2}\.\d{2}\]$/.test(t);
 }
 
+function isParenTag(text: string) {
+  return /^\([^)]+\)$/.test(text.trim());
+}
+
 function stripBracketPrefix(text: string) {
   let t = text.trim();
   while (/^\[[^\]]+\]/.test(t) && !/^\[\d{2}:\d{2}\.\d{2}\]/.test(t)) {
@@ -11,9 +15,18 @@ function stripBracketPrefix(text: string) {
   return t;
 }
 
+function stripParenPrefix(text: string) {
+  let t = text.trim();
+  while (/^\([^)]+\)/.test(t)) {
+    t = t.replace(/^\([^)]+\)\s*/, '').trim();
+  }
+  return t;
+}
+
 export function cleanLyricBody(text: string) {
-  const t = stripBracketPrefix(text);
-  if (!t || isBracketTag(t)) return '';
+  let t = stripBracketPrefix(text);
+  t = stripParenPrefix(t);
+  if (!t || isBracketTag(t) || isParenTag(t)) return '';
   return t;
 }
 
