@@ -6,6 +6,7 @@ import Player from './Player'
 import { apiUrl, parseApiError } from '@/lib/api'
 import { addSong, listSongs } from '@/lib/history'
 import { consumeDailyQuota, getDailyRemaining } from '@/lib/quota'
+import { SHOWCASE_ITEMS } from '@/lib/showcase'
 import { LOGO_ALT, LOGO_SRC } from '@/lib/site'
 
 const PAGE_SIZE = 5
@@ -481,6 +482,60 @@ export default function Home() {
           )}
         </div>
       </div>
+      <section className="card showcase">
+        <h3>Featured Works</h3>
+        <div className="showcase-row">
+          {(
+            [
+              { key: 'vocal', label: 'Vocal', items: SHOWCASE_ITEMS.filter((i) => i.type === 'vocal') },
+              {
+                key: 'instrumental',
+                label: 'Instrumental',
+                items: SHOWCASE_ITEMS.filter((i) => i.type === 'instrumental'),
+              },
+            ] as const
+          ).map((group) => (
+            <div key={group.key} className={`showcase-group showcase-panel showcase-panel-${group.key}`}>
+              <span className={`showcase-subtitle showcase-subtitle-${group.key}`}>{group.label}</span>
+              <div className="showcase-grid">
+                {group.items.map((item) => (
+                  <div key={item.id} className={`showcase-card showcase-card-${group.key}`}>
+                    <button
+                      type="button"
+                      className="showcase-cover-btn"
+                      aria-label={`Play ${item.name}`}
+                      onClick={() => loadTrack(item.name, item.audio, true)}
+                    >
+                      <img className="showcase-cover" src={item.cover} alt={item.name} loading="lazy" />
+                      <span className="showcase-cover-overlay">
+                        <svg className="showcase-play-icon" viewBox="0 0 48 48" aria-hidden="true">
+                          <path
+                            d="M17 13v22l18-11-18-11z"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </span>
+                    </button>
+                    <div className="showcase-body">
+                      <h4 className="showcase-name">{item.name}</h4>
+                      <div className="showcase-tags">
+                        {item.tags.map((tag) => (
+                          <span key={tag} className="showcase-tag">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
       </div>
       <Footer />
     </div>
