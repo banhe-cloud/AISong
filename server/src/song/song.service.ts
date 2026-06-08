@@ -24,34 +24,23 @@ export class SongService {
     const lyrics = instrumental
       ? '[inst]'
       : body.lyrics?.trim() || (await this.lyricsService.generate(body.prompt));
-    const musicRes = await this.piapi.generateMusic(body.prompt, lyrics, body.vocalType);
+    const { taskId } = await this.piapi.createMusicTask(body.prompt, lyrics, body.vocalType);
 
     const id = Date.now();
     const name = `Auto Music #${String(id).slice(-4)}`;
 
-    const result = {
+    return {
       id,
       name,
       songTitle: name,
       styleTags: body.prompt,
       lyrics,
-      audioUrl: musicRes.audioUrl,
-      taskId: musicRes.taskId,
-      taskType: musicRes.taskType,
+      taskId,
     };
+  }
 
-    this.history.add({
-      id,
-      ip,
-      name,
-      prompt: body.prompt,
-      audioUrl: musicRes.audioUrl,
-      taskId: musicRes.taskId,
-      taskType: musicRes.taskType,
-      createdAt: new Date().toISOString(),
-    });
-
-    return result;
+  getTaskStatus(taskId: string) {
+    return this.piapi.getTaskStatus(taskId);
   }
 
   listHistory(ip: string, page: number, limit: number) {

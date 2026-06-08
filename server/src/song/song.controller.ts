@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Header, Post, Query, Req, StreamableFile } from '@nestjs/common';
+import { Body, Controller, Get, Header, Param, Post, Query, Req, StreamableFile } from '@nestjs/common';
 import { Request } from 'express';
 import { QuotaService } from '../quota/quota.service';
 import { SongService } from './song.service';
@@ -41,6 +41,11 @@ export class SongController {
     this.quotaService.checkAndConsume(ip);
     console.log('[generate]', { ip, prompt: body.prompt, vocalType: body.vocalType, hasLyrics: !!body.lyrics?.trim() });
     return this.songService.generate(body, ip);
+  }
+
+  @Get('task/:taskId')
+  taskStatus(@Param('taskId') taskId: string) {
+    return this.songService.getTaskStatus(taskId);
   }
 
   @Get('download')

@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import Footer from './Footer'
 import Player from './Player'
-import { apiUrl, parseApiError } from '@/lib/api'
+import { apiUrl, parseApiError, pollTaskStatus } from '@/lib/api'
 import { addSong, listSongs } from '@/lib/history'
 import { consumeDailyQuota, getDailyRemaining } from '@/lib/quota'
 import { SHOWCASE_ITEMS } from '@/lib/showcase'
@@ -161,14 +161,15 @@ export default function Home() {
       })
       if (!res.ok) throw new Error(await parseApiError(res))
       const data = await res.json()
+      const task = data.taskId ? await pollTaskStatus(data.taskId) : data
       consumeDailyQuota()
-      if (data.audioUrl) {
-        loadTrack(data.name, data.audioUrl, false)
+      if (task.audioUrl) {
+        loadTrack(data.name, task.audioUrl, false)
         addSong({
           id: data.id,
           name: data.name,
           prompt,
-          audioUrl: data.audioUrl,
+          audioUrl: task.audioUrl,
           createdAt: new Date().toISOString(),
         })
         loadHistory(1)
@@ -483,7 +484,7 @@ export default function Home() {
         </div>
       </div>
       <section className="card showcase">
-        <h3>Featured Works</h3>
+        <h3>Discover AI-Crafted Music</h3>
         <div className="showcase-row">
           {(
             [

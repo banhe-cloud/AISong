@@ -28,7 +28,7 @@ export class PiapiService {
     return res.json();
   }
 
-  async generateMusic(prompt: string, lyrics: string, vocalType?: string) {
+  async createMusicTask(prompt: string, lyrics: string, vocalType?: string) {
     const instrumental = vocalType === 'instrumental';
     const finalLyrics = instrumental ? '[inst]' : cleanLyricsForModel(lyrics?.trim() || '');
     if (!instrumental && !finalLyrics) {
@@ -52,7 +52,7 @@ export class PiapiService {
         webhook_config: { endpoint: '', secret: '' },
       },
     };
-    console.log('[PiAPI] generateMusic', { prompt, vocalType, payload });
+    console.log('[PiAPI] createMusicTask', { prompt, vocalType, payload });
     const createRes = await this.post('/api/v1/task', payload);
 
     if (createRes.code !== 200) {
@@ -67,32 +67,26 @@ export class PiapiService {
       throw new HttpException('no task_id returned', HttpStatus.BAD_GATEWAY);
     }
 
-    return this.pollTask(taskId);
+    return { taskId };
   }
 
-  private async pollTask(taskId: string) {
-    for (let i = 0; i < 120; i++) {
-      await new Promise((r) => setTimeout(r, 3000));
-      const res = await this.get(`/api/v1/task/${taskId}`);
-      if (res.code !== 200) {
-        throw new HttpException(res.message || 'get task failed', HttpStatus.BAD_GATEWAY);
-      }
-      const status = String(res.data?.status || '').toLowerCase();
-      if (status === 'completed') {
-        const audioUrl = this.extractAudioUrl(res.data?.output);
-        if (!audioUrl) {
-          throw new HttpException('no audio url in output', HttpStatus.BAD_GATEWAY);
-        }
-        return { taskId, audioUrl, taskType: res.data?.task_type };
-      }
-      if (status === 'failed') {
-        throw new HttpException(
-          res.data?.error?.message || 'task failed',
-          HttpStatus.BAD_GATEWAY,
-        );
-      }
+  async getTaskStatus(taskId: string) {
+    const res = await this.get(`/api/v1/task/${taskId}`);
+    if (res.code !== 200) {
+      throw new HttpException(res.message || 'get task failed', HttpStatus.BAD_GATEWAY);
     }
-    throw new HttpException('task timeout', HttpStatus.GATEWAY_TIMEOUT);
+    const status = String(res.data?.status || '').toLowerCase();
+    if (status === 'completed') {
+      const audioUrl = this.extractAudioUrl(res.data?.output);
+      if (!audioUrl) {
+        return { status: 'failed', error: 'no audio url in output' };
+      }
+      return { status: 'completed', audioUrl, taskType: res.data?.task_type };
+    }
+    if (status === 'failed') {
+      return { status: 'failed', error: res.data?.error?.message || 'task failed' };
+    }
+    return { status };
   }
 
   private extractAudioUrl(output: unknown): string | null {
