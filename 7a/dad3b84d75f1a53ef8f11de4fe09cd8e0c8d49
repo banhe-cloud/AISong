@@ -1,0 +1,89 @@
+server/src/song/song.service.ts
+  s_c0832bf81dea55::t_b09336153b738f 3,9
+  s_c0832bf81dea55::t_db8f733039229b 20,25
+  s_64ea930c37e2b3::t_ecfe721199fc74 31,38,43
+server/src/song/song.module.ts
+  s_64ea930c37e2b3::t_5cb74454951da2 13
+  s_c0832bf81dea55::t_686d29ecb438c5 3,5
+server/src/task/task-store.service.ts
+  s_c0832bf81dea55::t_258dd5e47fae2d 1-68
+server/src/minimax/minimax.service.ts
+  s_c0832bf81dea55::t_69d69fa5cd8f2e 2-3,6-8,11,23-24,26-35,37-38,43-54,56-59,61-64,66-73,77-95,98,133,135-149
+  s_31c8097424566d::t_ac8dfc1216875f 13-19
+  s_31c8097424566d::t_6184734ca29c59 99
+  s_c0832bf81dea55::t_b5c23abdb4d056 9
+  s_64ea930c37e2b3::t_042df659f0a787 100-132,134
+server/src/song/song.controller.ts
+  s_c0832bf81dea55::t_240eb7de2754b3 37,42-43,45-48
+  s_2861160dc28b55::t_3f7f5153dcca2f 44
+  s_64ea930c37e2b3::t_f1f98ebd361118 1
+web/lib/site.ts
+  s_c0832bf81dea55::t_ce8f0818ae70f3 1
+server/src/quota/quota.service.ts
+  s_5ed850cd98c10b::t_d179dc1d9bfbd6 42-44
+server/package.json
+  h_327f5a14d61768 7
+web/package.json
+  s_c0832bf81dea55::t_1960a11923b0b7 5
+  s_c0832bf81dea55::t_ce09651258cf90 7
+server/src/lyrics/lyrics.service.ts
+  s_64ea930c37e2b3::t_c93a2fc6ea72f4 5-6,9-22,25-26,30,33-34,38-43,45-52,54-56,58-59
+web/components/Home.tsx
+  s_31c8097424566d::t_389623dd45402a 145
+  s_31c8097424566d::t_3773b7631ef93b 159-160,165
+  s_31c8097424566d::t_bbb73125a70fb5 6
+  s_64ea930c37e2b3::t_e26e0db0338ce5 448,501
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.17-trip",
+  "base_commit_sha": "7adad3b84d75f1a53ef8f11de4fe09cd8e0c8d49",
+  "prompts": {},
+  "humans": {
+    "h_327f5a14d61768": {
+      "author": "hban <hban@trip.com>"
+    }
+  },
+  "sessions": {
+    "s_2861160dc28b55": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "1788f529-6913-4e38-a45d-605f74fe360b",
+        "model": "default"
+      },
+      "human_author": "hban <hban@trip.com>"
+    },
+    "s_31c8097424566d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5219f08a-0a13-47bc-9377-3bf38dac0dbf",
+        "model": "arn:aws:bedrock:us-west-2:671660153913:application-inference-profile/4n4k86cu4ixk"
+      },
+      "human_author": "hban <hban@trip.com>"
+    },
+    "s_5ed850cd98c10b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "51d5b879-6f2d-4e3c-8a69-b94856a10083",
+        "model": "unknown"
+      },
+      "human_author": "hban <hban@trip.com>"
+    },
+    "s_64ea930c37e2b3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "785a3c47-5a41-47f2-af35-12366fc1ab1a",
+        "model": "arn:aws:bedrock:us-west-2:133197901387:application-inference-profile/69qupdyxh52i"
+      },
+      "human_author": "hban <hban@trip.com>"
+    },
+    "s_c0832bf81dea55": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "6ec2797a-d309-47d7-a672-a034dc9c91d6",
+        "model": "default"
+      },
+      "human_author": "hban <hban@trip.com>"
+    }
+  }
+}
