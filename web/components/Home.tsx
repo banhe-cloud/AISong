@@ -3,10 +3,9 @@
 import { useEffect, useRef, useState } from 'react'
 import Footer from './Footer'
 import Player from './Player'
-import { apiUrl, parseApiError, pollTaskStatus } from '@/lib/api'
+import { apiUrl, parseApiError } from '@/lib/api'
 import { addSong, listSongs } from '@/lib/history'
 import { consumeDailyQuota, getDailyRemaining } from '@/lib/quota'
-import { SHOWCASE_ITEMS } from '@/lib/showcase'
 import { LOGO_ALT, LOGO_SRC } from '@/lib/site'
 
 const PAGE_SIZE = 5
@@ -89,7 +88,6 @@ export default function Home() {
   const [currentTrack, setCurrentTrack] = useState<{ name: string; url: string } | null>(null)
   const [playKey, setPlayKey] = useState(0)
   const [remaining, setRemaining] = useState<number | null>(null)
-  const [downloadingId, setDownloadingId] = useState<number | null>(null)
 
   function loadHistory(page: number) {
     const data = listSongs(page, PAGE_SIZE)
@@ -140,15 +138,11 @@ export default function Home() {
       return
     }
     const prompt = buildFinalPrompt(promptInput, advancedOpen, style, mood, theme, themeCustom)
-    if (!prompt.trim()) {
-      alert('Describe your track or pick options in Advanced')
-      return
-    }
     startedAtRef.current = Date.now()
     setIsGenerating(true)
     setLoadingStep(0)
     setElapsedSec(0)
-    setPending({ prompt })
+    setPending({ prompt: prompt || 'Generating...' })
     try {
       const res = await fetch(apiUrl('/generate'), {
         method: 'POST',
@@ -161,15 +155,14 @@ export default function Home() {
       })
       if (!res.ok) throw new Error(await parseApiError(res))
       const data = await res.json()
-      const task = data.taskId ? await pollTaskStatus(data.taskId) : data
       consumeDailyQuota()
-      if (task.audioUrl) {
-        loadTrack(data.name, task.audioUrl, false)
+      if (data.audioUrl) {
+        loadTrack(data.name, data.audioUrl, false)
         addSong({
           id: data.id,
           name: data.name,
           prompt,
-          audioUrl: task.audioUrl,
+          audioUrl: data.audioUrl,
           createdAt: new Date().toISOString(),
         })
         loadHistory(1)
@@ -203,30 +196,6 @@ export default function Home() {
       alert(e instanceof Error ? e.message : 'Failed to generate lyrics')
     }
     setIsLyricsLoading(false)
-  }
-
-  async function downloadAudio(url: string, name: string, id: number) {
-    if (!url) return
-    const ext = /\.(\w+)(?:\?|$)/.exec(url)?.[1] || 'mp3'
-    const filename = `${name || 'music'}.${ext}`
-    setDownloadingId(id)
-    try {
-      const res = await fetch(
-        apiUrl(`/download?url=${encodeURIComponent(url)}&name=${encodeURIComponent(filename)}`),
-      )
-      if (!res.ok) throw new Error(await parseApiError(res))
-      const blob = await res.blob()
-      const blobUrl = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = blobUrl
-      a.download = filename
-      a.click()
-      URL.revokeObjectURL(blobUrl)
-    } catch (e) {
-      alert(e instanceof Error ? e.message : 'Download failed')
-    } finally {
-      setDownloadingId(null)
-    }
   }
 
   return (
@@ -447,13 +416,6 @@ export default function Home() {
                 >
                   Play
                 </button>
-                <button
-                  className="hist-btn"
-                  onClick={() => downloadAudio(item.audioUrl, item.name, item.id)}
-                  disabled={!item.audioUrl || downloadingId === item.id}
-                >
-                  {downloadingId === item.id ? 'Downloading...' : 'Download'}
-                </button>
               </div>
             </div>
           ))}
@@ -483,7 +445,7 @@ export default function Home() {
           )}
         </div>
       </div>
-      <section className="card showcase">
+      {/* <section className="card showcase">
         <h3>Discover AI-Crafted Music</h3>
         <div className="showcase-row">
           {(
@@ -536,7 +498,7 @@ export default function Home() {
             </div>
           ))}
         </div>
-      </section>
+      </section> */}
       </div>
       <Footer />
     </div>

@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { LyricsService } from '../lyrics/lyrics.service';
-import { PiapiService } from '../piapi/piapi.service';
+import { MinimaxService } from '../minimax/minimax.service';
 import { SongHistoryService } from './song-history.service';
 
 @Injectable()
 export class SongService {
   constructor(
-    private readonly piapi: PiapiService,
+    private readonly minimax: MinimaxService,
     private readonly lyricsService: LyricsService,
     private readonly history: SongHistoryService,
   ) {}
@@ -17,30 +17,30 @@ export class SongService {
   }
 
   async generate(
-    body: { prompt: string; lyrics?: string; vocalType?: string },
+    body: { prompt: string; lyrics?: string; vocalType?: string; version?: string },
     ip: string,
   ) {
     const instrumental = body.vocalType === 'instrumental';
     const lyrics = instrumental
-      ? '[inst]'
+      ? ''
       : body.lyrics?.trim() || (await this.lyricsService.generate(body.prompt));
-    const { taskId } = await this.piapi.createMusicTask(body.prompt, lyrics, body.vocalType);
 
     const id = Date.now();
     const name = `Auto Music #${String(id).slice(-4)}`;
 
+    const result = await this.minimax.generateMusic(body.prompt, lyrics, body.vocalType);
     return {
       id,
       name,
       songTitle: name,
       styleTags: body.prompt,
       lyrics,
-      taskId,
+      audioUrl: result.audioUrl,
     };
   }
 
   getTaskStatus(taskId: string) {
-    return this.piapi.getTaskStatus(taskId);
+    return this.minimax.getTaskStatus(taskId);
   }
 
   listHistory(ip: string, page: number, limit: number) {

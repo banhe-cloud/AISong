@@ -39,7 +39,9 @@ export class QuotaService {
     const file = getDataFile('ip-quota.json');
     if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
     if (!existsSync(file)) return {};
-    return JSON.parse(readFileSync(file, 'utf-8'));
+    const content = readFileSync(file, 'utf-8').trim();
+    if (!content) return {};
+    return JSON.parse(content);
   }
 
   private save(data: Record<string, Record<string, number>>) {
