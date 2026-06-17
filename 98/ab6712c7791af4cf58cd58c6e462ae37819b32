@@ -1,0 +1,26 @@
+web/.env.example
+  s_2861160dc28b55::t_4d6c3548f79b84 1
+web/.env.production
+  s_2861160dc28b55::t_a8dfdf6f281925 2
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.17-trip",
+  "base_commit_sha": "98ab6712c7791af4cf58cd58c6e462ae37819b32",
+  "prompts": {},
+  "humans": {
+    "h_327f5a14d61768": {
+      "author": "hban <hban@trip.com>"
+    }
+  },
+  "sessions": {
+    "s_2861160dc28b55": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "1788f529-6913-4e38-a45d-605f74fe360b",
+        "model": "default"
+      },
+      "human_author": "hban <hban@trip.com>"
+    }
+  }
+}
