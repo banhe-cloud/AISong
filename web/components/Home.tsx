@@ -7,6 +7,7 @@ import { apiUrl, parseApiError } from '@/lib/api'
 import { addSong, listSongs } from '@/lib/history'
 import { consumeDailyQuota, getDailyRemaining } from '@/lib/quota'
 import { LOGO_ALT, LOGO_SRC } from '@/lib/site'
+import { FAQ_ITEMS } from '@/lib/faq'
 
 const PAGE_SIZE = 5
 
@@ -530,6 +531,17 @@ export default function Home() {
           ))}
         </div>
       </section> */}
+      <section className="card faq-section">
+        <h2 className="faq-title">FAQ</h2>
+        <dl className="faq-list">
+          {FAQ_ITEMS.map((item) => (
+            <div key={item.q} className="faq-item">
+              <dt className="faq-q">{item.q}</dt>
+              <dd className="faq-a">{item.a}</dd>
+            </div>
+          ))}
+        </dl>
+      </section>
       </div>
       <Footer />
     </div>
