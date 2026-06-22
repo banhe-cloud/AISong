@@ -1,0 +1,26 @@
+web/lib/faq.ts
+  s_2861160dc28b55::t_9bcda6c18a4925 1-22
+web/app/globals.css
+  s_2861160dc28b55::t_72d48f796a6157 139-170
+web/components/Home.tsx
+  s_2861160dc28b55::t_0eabd8bdec0e9f 534-544
+  s_2861160dc28b55::t_c9a6dedace86f0 10
+web/app/page.tsx
+  s_2861160dc28b55::t_9f86257c8d2387 2,12-24,26-34
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.18-trip",
+  "base_commit_sha": "9d22fc8283af34d8761ab7b423ea1b046c9949ef",
+  "prompts": {},
+  "sessions": {
+    "s_2861160dc28b55": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "1788f529-6913-4e38-a45d-605f74fe360b",
+        "model": "default"
+      },
+      "human_author": "hban <hban@trip.com>"
+    }
+  }
+}
