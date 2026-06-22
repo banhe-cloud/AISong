@@ -22,6 +22,8 @@ export const metadata: Metadata = {
   keywords: [
     'AI music generator',
     'AI song generator',
+    'background music generator',
+    'royalty free background music',
     'TikTok music',
     'Reels music',
     'royalty free AI music',

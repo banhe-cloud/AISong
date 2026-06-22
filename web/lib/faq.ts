@@ -16,7 +16,10 @@ export const FAQ_ITEMS = [
     a: 'No account is required to start. Open SongAI, enter a prompt, and generate your first track for free during our Beta.',
   },
   {
-    q: 'What styles can I create with this AI music generator?',
+    q: 'Can SongAI generate background music for videos?',
+    a: 'Yes. Choose Instrumental to create royalty-free background music for vlogs, ads, podcasts, and YouTube Shorts. Describe the mood and style, then download your track in about 2 minutes.',
+  },
+  {
     a: 'You can generate Pop, Hip-Hop, Electronic, Lo-fi, Rock, Cinematic, and more. Use Advanced options to set mood and theme for TikTok-ready tracks.',
   },
 ] as const

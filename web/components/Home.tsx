@@ -248,8 +248,9 @@ export default function Home() {
           video in about 2 minutes.
         </p>
         <p className="seo-intro">
-          SongAI is an AI music generator built for creators who need royalty-friendly tracks fast. Use our
-          AI song generator to match style, mood, and theme — perfect for TikTok, Reels, and UGC ads.
+          SongAI is an AI music generator and background music generator for creators who need royalty-friendly
+          tracks fast. Generate instrumental background music or full songs — perfect for TikTok, Reels, vlogs,
+          and UGC ads.
         </p>
       </section>
       <div className="page-main">
