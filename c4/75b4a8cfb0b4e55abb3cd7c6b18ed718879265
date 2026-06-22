@@ -1,0 +1,28 @@
+web/app/globals.css
+  s_2861160dc28b55::t_ca5077ab25d229 66-74
+web/components/Home.tsx
+  s_2861160dc28b55::t_43f5b195f6481c 223
+  s_2861160dc28b55::t_03381e16327614 16
+  s_2861160dc28b55::t_6f311e3fa7d683 215
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.18-trip",
+  "base_commit_sha": "c475b4a8cfb0b4e55abb3cd7c6b18ed718879265",
+  "prompts": {},
+  "humans": {
+    "h_327f5a14d61768": {
+      "author": "hban <hban@trip.com>"
+    }
+  },
+  "sessions": {
+    "s_2861160dc28b55": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "1788f529-6913-4e38-a45d-605f74fe360b",
+        "model": "default"
+      },
+      "human_author": "hban <hban@trip.com>"
+    }
+  }
+}
