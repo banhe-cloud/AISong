@@ -16,7 +16,7 @@ async function bootstrap() {
   );
   app.setGlobalPrefix('api');
   app.set('trust proxy', true);
-  app.enableCors();
+  app.enableCors({ origin: true, credentials: true, allowedHeaders: ['Content-Type', 'Authorization'] });
   await app.init();
   return expressApp;
 }

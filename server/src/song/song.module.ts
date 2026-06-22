@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { AuthModule } from '../auth/auth.module';
 import { LyricsService } from '../lyrics/lyrics.service';
 import { MinimaxService } from '../minimax/minimax.service';
 import { QuotaModule } from '../quota/quota.module';
@@ -8,7 +9,7 @@ import { SongHistoryService } from './song-history.service';
 import { SongService } from './song.service';
 
 @Module({
-  imports: [QuotaModule],
+  imports: [QuotaModule, AuthModule],
   controllers: [SongController],
   providers: [SongService, SongHistoryService, MinimaxService, TaskStoreService, LyricsService],
 })

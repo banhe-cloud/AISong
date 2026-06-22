@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
+import Providers from '@/components/Providers'
 import './globals.css'
 import { LOGO_PATH, OG_IMAGE_PATH, SITE_DESCRIPTION, SITE_TITLE, SITE_URL } from '@/lib/site'
 
@@ -46,7 +47,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <Providers>{children}</Providers>
+      </body>
     </html>
   )
 }

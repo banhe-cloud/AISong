@@ -1,9 +1,10 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { Show, SignInButton, UserButton, useAuth } from '@clerk/react'
 import Footer from './Footer'
 import Player from './Player'
-import { apiUrl, parseApiError } from '@/lib/api'
+import { apiUrl, authHeaders, parseApiError } from '@/lib/api'
 import { addSong, listSongs } from '@/lib/history'
 import { consumeDailyQuota, getDailyRemaining } from '@/lib/quota'
 import { LOGO_ALT, LOGO_SRC } from '@/lib/site'
@@ -65,6 +66,7 @@ function buildFinalPrompt(
 }
 
 export default function Home() {
+  const { getToken } = useAuth()
   const [promptInput, setPromptInput] = useState('')
   const [lyricsInput, setLyricsInput] = useState('')
   const [isLyricsLoading, setIsLyricsLoading] = useState(false)
@@ -146,7 +148,10 @@ export default function Home() {
     try {
       const res = await fetch(apiUrl('/generate'), {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(await authHeaders(getToken)),
+        },
         body: JSON.stringify({
           prompt,
           lyrics: lyricsInput.trim() || undefined,
@@ -186,7 +191,10 @@ export default function Home() {
     try {
       const res = await fetch(apiUrl('/lyrics'), {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(await authHeaders(getToken)),
+        },
         body: JSON.stringify({ prompt }),
       })
       if (!res.ok) throw new Error(await parseApiError(res))
@@ -213,7 +221,19 @@ export default function Home() {
           />
           <span className="logo-name">SongAI</span>
         </div>
-        <div className="header-tag">No Copyright · For TikTok/Reels</div>
+        <div className="header-actions">
+          <div className="header-tag">No Copyright · For TikTok/Reels</div>
+          <Show when="signed-out">
+            <SignInButton mode="modal">
+              <button type="button" className="auth-btn">
+                Sign in
+              </button>
+            </SignInButton>
+          </Show>
+          <Show when="signed-in">
+            <UserButton />
+          </Show>
+        </div>
       </header>
       <section className="hero page-hero">
         <h1>SongAI — AI Music Generator for TikTok &amp; Reels</h1>

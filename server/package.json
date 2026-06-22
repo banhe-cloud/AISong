@@ -7,6 +7,7 @@
     "start:dev": "lsof -ti :4233 | xargs kill -9 && nest build && nest start --watch"
   },
   "dependencies": {
+    "@clerk/backend": "^3.8.0",
     "@nestjs/common": "10.4.15",
     "@nestjs/core": "10.4.15",
     "@nestjs/platform-express": "10.4.15",

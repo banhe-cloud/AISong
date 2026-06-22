@@ -7,7 +7,7 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.setGlobalPrefix('api');
   app.set('trust proxy', true);
-  app.enableCors();
+  app.enableCors({ origin: true, credentials: true, allowedHeaders: ['Content-Type', 'Authorization'] });
   await app.listen(4233);
 }
 bootstrap();

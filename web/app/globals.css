@@ -107,6 +107,25 @@ body.has-player {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+.auth-btn {
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 13px;
+  cursor: pointer;
+}
+.auth-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
 .page-main {
   flex: 1;
   display: flex;

@@ -4,6 +4,12 @@ export function apiUrl(path: string) {
   return `${API_BASE}/api${path}`
 }
 
+export async function authHeaders(getToken?: () => Promise<string | null>) {
+  if (!getToken) return {}
+  const token = await getToken()
+  return token ? { Authorization: `Bearer ${token}` } : {}
+}
+
 export async function parseApiError(res: Response) {
   const text = await res.text()
   try {
