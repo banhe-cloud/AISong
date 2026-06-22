@@ -1,0 +1,57 @@
+server/src/auth/auth.service.ts
+  s_2861160dc28b55::t_a10398bf52e40a 1-26
+server/src/auth/auth.module.ts
+  s_2861160dc28b55::t_d527bcb73d8f86 1-8
+web/components/Home.tsx
+  s_2861160dc28b55::t_5fcd48b173636f 7
+  s_2861160dc28b55::t_9a3aa7903ef7c1 4
+  s_2861160dc28b55::t_c0db6b259bfb58 151-154
+  s_2861160dc28b55::t_43b435f095696d 194-197
+  s_2861160dc28b55::t_d97a918e9ff816 224-225,227-231,234,236
+  s_2861160dc28b55::t_36e3db0b71c01a 226,232-233,235
+  s_2861160dc28b55::t_a646cd37d06b3d 69
+web/components/Providers.tsx
+  s_2861160dc28b55::t_c3207a3cde880b 1-11
+web/package.json
+  s_2861160dc28b55::t_b6238149e8f4f5 10
+web/.env.production
+  h_327f5a14d61768 3
+server/package.json
+  s_2861160dc28b55::t_86f34fb118fe14 10
+server/src/song/song.controller.ts
+  s_2861160dc28b55::t_e4dc9e8d7b5da0 3,12,21-22,26,29,38,42-43,45,51
+web/lib/api.ts
+  s_2861160dc28b55::t_15bfb426729298 7-12
+server/src/main.ts
+  s_2861160dc28b55::t_21f7e2e7d1cfb7 10
+web/app/globals.css
+  s_2861160dc28b55::t_462e9b0001722f 110-128
+server/src/vercel.ts
+  s_2861160dc28b55::t_3914f5b98a1f47 19
+web/app/layout.tsx
+  s_2861160dc28b55::t_cd0b57b900b3b9 3
+  s_2861160dc28b55::t_0c698727435b10 50-52
+server/src/song/song.module.ts
+  s_2861160dc28b55::t_2491cd833382f9 2,12
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.18-trip",
+  "base_commit_sha": "071d84f26640804f516c71378164d09315ea07fa",
+  "prompts": {},
+  "humans": {
+    "h_327f5a14d61768": {
+      "author": "hban <hban@trip.com>"
+    }
+  },
+  "sessions": {
+    "s_2861160dc28b55": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "1788f529-6913-4e38-a45d-605f74fe360b",
+        "model": "default"
+      },
+      "human_author": "hban <hban@trip.com>"
+    }
+  }
+}
