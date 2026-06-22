@@ -88,6 +88,7 @@ export default function Home() {
   const [currentTrack, setCurrentTrack] = useState<{ name: string; url: string } | null>(null)
   const [playKey, setPlayKey] = useState(0)
   const [remaining, setRemaining] = useState<number | null>(null)
+  const [downloadingId, setDownloadingId] = useState<number | null>(null)
 
   function loadHistory(page: number) {
     const data = listSongs(page, PAGE_SIZE)
@@ -129,6 +130,29 @@ export default function Home() {
     setCurrentTrack({ name, url })
     if (play) setPlayKey((k) => k + 1)
     document.body.classList.add('has-player')
+  }
+
+  async function downloadTrack(id: number, name: string, audioUrl: string) {
+    if (!audioUrl || downloadingId !== null) return
+    setDownloadingId(id)
+    try {
+      const res = await fetch(
+        apiUrl(
+          `/download?url=${encodeURIComponent(audioUrl)}&name=${encodeURIComponent(name || 'music')}`,
+        ),
+      )
+      if (!res.ok) throw new Error(await parseApiError(res))
+      const blob = await res.blob()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `${name || 'music'}.mp3`
+      a.click()
+      URL.revokeObjectURL(url)
+    } catch (e) {
+      alert(e instanceof Error ? e.message : 'Download failed')
+    }
+    setDownloadingId(null)
   }
 
   async function handleGenerate() {
@@ -405,15 +429,21 @@ export default function Home() {
               <div>
                 <button
                   className="hist-btn"
-                  onClick={() => window.open(item.audioUrl, '_blank', 'noopener,noreferrer')}
-                  disabled={!item.audioUrl}
+                  onClick={() => downloadTrack(item.id, item.name, item.audioUrl)}
+                  disabled={!item.audioUrl || downloadingId !== null}
                 >
-                  Open
+                  {downloadingId === item.id ? (
+                    <>
+                      <span className="spinner hist-btn-spinner" /> Downloading...
+                    </>
+                  ) : (
+                    'Download'
+                  )}
                 </button>
                 <button
                   className="hist-btn"
                   onClick={() => loadTrack(item.name, item.audioUrl, true)}
-                  disabled={!item.audioUrl}
+                  disabled={!item.audioUrl || downloadingId !== null}
                 >
                   Play
                 </button>
