@@ -13,7 +13,7 @@ const PAGE_SIZE = 5
 const LOADING_STEPS = [
   'Submitting your music request...',
   'AI is composing your track...',
-  'Still generating, usually within 1 minute...',
+  'Still generating, usually around 2 minutes...',
   'Almost there, hang tight...',
 ]
 
@@ -212,6 +212,7 @@ export default function Home() {
             fetchPriority="high"
           />
           <span className="logo-name">SongAI</span>
+          <span className="beta-badge">Beta</span>
         </div>
         <div className="header-tag">No Copyright · For TikTok/Reels</div>
       </header>
@@ -219,7 +220,7 @@ export default function Home() {
         <h1>SongAI — AI Music Generator for TikTok &amp; Reels</h1>
         <p className="hero-lead">
           Free AI song generator — create original AI music for TikTok, Instagram Reels, and short-form
-          video in under 1 minute.
+          video in about 2 minutes.
         </p>
         <p className="seo-intro">
           SongAI is an AI music generator built for creators who need royalty-friendly tracks fast. Use our
