@@ -11,4 +11,4 @@ export const LOGO_ALT = 'SongAI - AI Music Generator Logo'
 export const SITE_TITLE = 'SongAI - AI Music Generator for TikTok & Reels'
 
 export const SITE_DESCRIPTION =
-  'SongAI is a free AI music generator and background music generator. Create royalty-free AI songs and instrumental tracks for TikTok, Instagram Reels, and short videos in about 2 minutes.'
+  'SongAI is a free AI song generator with no sign up — an AI music maker for YouTube, TikTok, and Reels. Create royalty-free tracks in about 2 minutes.'
